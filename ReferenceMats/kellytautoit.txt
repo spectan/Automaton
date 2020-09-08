@@ -1,0 +1,21 @@
+Global $Paused
+HotKeySet("`", "TogglePause")
+HotKeySet("{DEL}", "Terminate")
+While 1 = 1
+    Send("z")
+    WinActivate ("Wurm Online 3.0")
+    Sleep(Random(5000,9500))
+WEnd
+Func TogglePause( )
+$Paused = NOT $Paused
+While $Paused
+sleep(100)
+ToolTip('Script is "Paused"',0,0)
+WEnd
+ToolTip("")
+EndFunc
+
+
+Func Terminate( )
+Exit 0
+EndFunc
