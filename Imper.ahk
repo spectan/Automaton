@@ -28,7 +28,7 @@ Gui, add, Text,, Username
 Gui, Add, ComboBox, r5 vUsername Sort Choose1, Auto Detect
 Gui, Tab, Type and Mode ;Improvement type and mode tab
 Gui, add, Text,, Improvement Type (Pick One):
-Gui, Add, DropDownList, r5 vImpType Choose1 Sort, Carpentry|Cloth Tailoring|Leatherworking|Masonry|Smithing
+Gui, Add, DropDownList, r5 vImpType Choose1 Sort, Carpentry|Cloth Tailoring|Leatherworking|Masonry|Smithing|Pottery
 Gui, add, Text,, Improvement Mode (Pick One):
 Gui, Add, DropDownList, r3 vImpMode Choose2 Sort, Pile of Same Items|Singular Item|Autism Mode
 Gui, Tab  ;Ends the tabs so what's after this doesn't align into the "backplate" of the menu
@@ -51,37 +51,31 @@ Return ;This will be ExitApp, just return for ease of testing.
 F5::
 ;Toolbelt Selector, set by the GUI.
 ;Toolbelts (need to add a better way to configure this in the future)
-carpentryToolbelt := {"log": 1, "carving": 2, "pelt": 3, "file": 4, "mallet": 5}
-smithToolbelt := {"lump": 1, "hammer": 2, "pelt": 3, "whetstone": 4, "water": 5}
-tailorToolbelt := {"string": 1, "needle": 2, "scissors": 3, "water": 4}
-lwingToolbelt := {"leather": 1, "needle": 2, "lknife": 3, "mallet": 4, "awl": 5}
-masonryToolbelt := {"rockshard": 1, "chisel": 2}
+;need to look into .ini files, a toolbelt setup tab linked to the ini, and the second toolbelt setup for water food and lockpicks
 Toolbelt := 0
-if ImpType = Carpentry
+;implemented switch statement, needs AHK [v1.1.31+] to work
+switch ImpType 
 {
-    Toolbelt := carpentryToolbelt
-}
-if ImpType = Cloth Tailoring
-{
-    Toolbelt := tailorToolbelt
-}
-if ImpType = Leatherworking
-{
-    Toolbelt := lwingToolbelt
-}
-if ImpType = Masonry
-{
-    Toolbelt := masonryToolbelt
-}
-if ImpType = Smithing
-{
-    Toolbelt := smithToolbelt
+    case "Carpentry":
+        Toolbelt := {"log": 1, "carving": 2, "pelt": 3, "file": 4, "mallet": 5}
+    case "Cloth Tailoring":
+        Toolbelt := {"string": 1, "needle": 2, "scissors": 3, "water": 4}
+    case "Leatherworking":
+        Toolbelt := {"leather": 1, "needle": 2, "lknife": 3, "mallet": 4, "awl": 5}
+    case "Masonry":
+        Toolbelt := {"rockshard": 1, "chisel": 2}
+    case "Smithing":
+        Toolbelt := {"lump": 1, "hammer": 2, "pelt": 3, "whetstone": 4, "water": 5}
+    case "Pottery":
+        Toolbelt := {"clay": 1, "shaper": 2, "spatula": 3, "hand": 4, "water": 5}
+    default:
+        MsgBox, Some shit got fucked up
 }
 ;Debug for testing array properly assigns to the variable
-/*
+
 For index, value in Toolbelt
     MsgBox % "Item " index " is '" value "'"
-*/
+
 
 
 F6::
