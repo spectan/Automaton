@@ -27,7 +27,7 @@ Gui, Font, s32 Bold Underline, Arial
 Gui, Add, Text, x56 y8 w410 h69, B  I  G    I  M  P  E  R
 Gui, Font
 Gui, Add, Picture, x528 y18 w399 h361, %A_ScriptDir%\include\peepo.jpg
-Gui, Add, Button, x16 y360 w80 gButtonOK, OK
+Gui, Add, Button, x16 y360 w80, OK
 Gui, Add, Tab3, x16 y80 w492 h271, Setup|Mode|Breaks|Config|Info
 Gui, Tab, 1
 Gui, Add, Text, x40 y120 w400 h13, Use the latest UI with scaling set at 90`% and opacity set at 100`% ;needed to escape the percent sign
@@ -72,7 +72,8 @@ else {
 Return
 
 ButtonOK:
-IniWrite, Username, %A_ScriptDir%\include\config.ini, GUI Settings, Username
+Gui, Submit, NoHide
+IniWrite, %Username%, %A_ScriptDir%\include\config.ini, GUI Settings, Username
 Return
 
 GuiClose:
