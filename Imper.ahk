@@ -23,45 +23,61 @@ if I_Icon <>
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon% 
 
-Gui Font, s32 Bold Underline, Arial
-Gui Add, Text, x56 y8 w410 h69, B  I  G    I  M  P  E  R
-Gui Font
-Gui Add, Picture, x528 y18 w399 h361, %A_ScriptDir%\include\peepo.jpg
-Gui Add, Tab3, x16 y80 w492 h301, Setup|Mode|Breaks|Config|Info
-Gui Tab, 1
-Gui Add, Text, x40 y120 w400 h13, Use the latest UI with scaling set at 90`% and opacity set at 100`% ;needed to escape the percent sign
-Gui Add, Text, x40 y150 w120 h13, Username:
-Gui Add, ComboBox, x40 y170 w120 vUsername, Auto Detect
-Gui Add, Text, x40 y200 w120 h13, Improve Bind:
-Gui Add, Edit, x40 y220 w120 h21 vImprove 0x10, i ;only allows lowercase letters
-Gui Add, Text, x40 y250 w120 h13, Repair Bind:
-Gui Add, Edit, x40 y270 w120 h21 vRepair 0x10, r ;only allows lowercase letters
-Gui Add, Text, x40 y300 w120 h13, Number of Actions:
-Gui Add, Edit, x40 y320 w27 h21 vActions 0x2000, 3 ;only allows numbers
-Gui Tab, 2
-Gui Add, Text, x40 y120 w400 h13, Improvement Type (Pick One):
-Gui Add, DropDownList, x40 y140 w120 h21 r6 vImpType Choose1 Sort, Carpentry|Cloth Tailoring|Leatherworking|Masonry|Smithing|Pottery
-Gui Add, Text, x40 y170 w400 h13, Improvement Mode (Pick One):
-Gui Add, DropDownList, x40 y190 w400 h21 r3 vImpMode Choose2 Sort, Pile of Same Items|Singular Item|World Item
-Gui Tab, 3
-Gui Add, CheckBox, x40 y120 w400 h13 vAutismMode, Autism Mode
-Gui Add, GroupBox, x40 y140 w400 h100 vContainerBox
-Gui Add, Text, x60 y170 w21 h13, Testing
+Gui, Font, s32 Bold Underline, Arial
+Gui, Add, Text, x56 y8 w410 h69, B  I  G    I  M  P  E  R
+Gui, Font
+Gui, Add, Picture, x528 y18 w399 h361, %A_ScriptDir%\include\peepo.jpg
+Gui, Add, Button, x16 y360 w80 gButtonOK, OK
+Gui, Add, Tab3, x16 y80 w492 h271, Setup|Mode|Breaks|Config|Info
+Gui, Tab, 1
+Gui, Add, Text, x40 y120 w400 h13, Use the latest UI with scaling set at 90`% and opacity set at 100`% ;needed to escape the percent sign
+Gui, Add, Text, x40 y150 w120 h13, Username:
+Gui, Add, ComboBox, x40 y170 w120 vUsername, Auto Detect
+Gui, Add, Text, x40 y200 w120 h13, Improve Bind:
+Gui, Add, Edit, x40 y220 w120 h21 vImprove 0x10, i ;only allows lowercase letters
+Gui, Add, Text, x40 y250 w120 h13, Repair Bind:
+Gui, Add, Edit, x40 y270 w120 h21 vRepair 0x10, r ;only allows lowercase letters
+Gui, Add, Text, x40 y300 w120 h13, Number of Actions:
+Gui, Add, Edit, x40 y320 w27 h21 vActions 0x2000, 3 ;only allows numbers
+Gui, Tab, 2
+Gui, Add, Text, x40 y120 w400 h13, Improvement Type (Pick One):
+Gui, Add, DropDownList, x40 y140 w120 h21 r6 vImpType Choose1 Sort, Carpentry|Cloth Tailoring|Leatherworking|Masonry|Smithing|Pottery
+Gui, Add, Text, x40 y170 w400 h13, Improvement Mode (Pick One):
+Gui, Add, DropDownList, x40 y190 w120 h21 r3 vImpMode Choose2 Sort, Pile of Same Items|Singular Item|World Item
+Gui, Tab, 3
+Gui, Add, CheckBox, x40 y120 w400 h13 vAutismMode gAutism, Autism Mode
+Gui, Add, GroupBox, x40 y140 w400 h100 vContainerBox
+Gui, Add, Text, x60 y170 w21 h13 vTesting, Testing
 ;need to add some sort of way to disable everything in container if autismmode is checked
 ;im thinking you can set a short medium and long break in ms
-Gui Tab, 4
+Gui, Tab, 4
 ;need to check out ini files, save curent selections and stuff to a file, and load configs back out again
-Gui Tab, 5
-Gui Add, Text, x40 y120 w400 h13, Version: 0.1
-Gui Add, Text, x40 y140 w400 h13, Updated: 9/09/2020
-Gui Add, Text, x40 y160 w400 h13, Created: 1/09/2020
-Gui Add, Text, x40 y180 w400 h13, Brought to you by: ???, ???, Dissimulo
-Gui Add, Text, x40 y200 w400 h13, Fuck Retro *dab*, fuck Keenan *dab*, fuck Enki *dab*, free my homies
-Gui Show, w950 h400, Wurm RSI Assistant
+Gui, Tab, 5
+Gui, Add, Text, x40 y120 w400 h13, Version: 0.1
+Gui, Add, Text, x40 y140 w400 h13, Updated: 9/09/2020
+Gui, Add, Text, x40 y160 w400 h13, Created: 1/09/2020
+Gui, Add, Text, x40 y180 w400 h13, Brought to you by: ???, ???, Dissimulo
+Gui, Add, Text, x40 y200 w400 h13, Fuck Retro *dab*, fuck Keenan *dab*, fuck Enki *dab*, free my homies
+Gui, Show, w950 h400, Wurm RSI Assistant
+Return
+
+Autism:
+GuiControlGet, AutismMode
+if (AutismMode = 1) {
+    GuiControl, Disable, Testing
+} 
+else {
+    GuiControl, Enable, Testing
+}
 Return
 
 ButtonOK:
+IniWrite, Username, %A_ScriptDir%\include\config.ini, GUI Settings, Username
+Return
+
 GuiClose:
+ExitApp
+Return
 GuiEscape:
 Gui, Submit  ; Saves the contents above to the variables specified.
 ;MsgBox Actions = %Actions%, Improve = %Improve%, Repair = %Repair%, Username = %Username%, ImproveType = %ImpType%, ImproveMode = %ImpMode% ;Debug for verifying variables saved appropriately
