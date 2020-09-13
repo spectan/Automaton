@@ -1,0 +1,14 @@
+While 1=1
+	Delay 1000
+	LoadRGB 1015,890
+	If {RGBGreen} >= 75
+		LoadRGB 975,1145
+		If {RGBBlue} <= 50
+			MousePos 550,275
+			Keys f
+			Keys f
+			Keys f
+			Delay 1000
+		End
+	End
+End

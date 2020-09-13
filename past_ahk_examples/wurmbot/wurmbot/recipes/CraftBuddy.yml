@@ -1,0 +1,18 @@
+# CraftBuddy v1
+# Crafting recipe by Tyler (lfanew)
+# https://github.com/lfanew
+---
+  CraftBuddy:
+    Start crafting:
+      action: click
+      params:
+        - 475
+        - 530
+      wait:
+        - busy
+    Wait until idle and rested:
+      wait:
+        - idle
+        - rested
+      timeout: 30
+  
