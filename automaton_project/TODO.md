@@ -9,7 +9,8 @@
 1. Figure out how to handle crafting window and rclick menus
 2. Packet sniffing
 3. Optimize stamina bar using pixel search instead?
-4. .ini files
+4. .ini files (DONE)
+4a. need to verify ctrl/shift modifiers work properly with writing/reading .ini files
 5. log reading
 6. normal distributions
 7. simpler mouse movements?
