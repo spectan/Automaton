@@ -127,7 +127,9 @@ Gui, Submit
 ;Could possibly set it up so each tab is under a different section, but was too lazy.
 varSaver := "Username,Improve,Repair,MineDig,Actions,ImpType,GatherType,ImpStyle" ;THIS MUST BE THE SAME IN EVERY SCRIPT THAT WILL READ THIS INI!!!! VERY IMPORTANT. NO SPACES
 loop, parse, varSaver, `,
+{
     IniWrite, % %A_LoopField%, %A_ScriptDir%\include\config.ini, Setup, % A_LoopField
+}
 Return
 
 
