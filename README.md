@@ -1,3 +1,7 @@
-Always take your own images!
+Automaton Project
 
-Ensure you're using the new UI, in dark mode at 90% scale and 100% opacity.
+/automaton_project for the project itself
+
+/past_ahk_examples for examples of what people have made in the past
+
+/gobanned for a working but very messy script with functions that can be yoinked for use
