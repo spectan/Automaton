@@ -10,6 +10,7 @@
 2. Packet sniffing
 3. Optimize stamina bar using pixel search instead?
 4. .ini files (DONE)
+4a. need to verify ctrl/shift modifiers work properly with writing/reading .ini files
 5. log reading
 6. normal distributions
 7. simpler mouse movements?
