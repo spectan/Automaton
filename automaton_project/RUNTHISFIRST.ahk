@@ -24,6 +24,8 @@ IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon% 
 
 ;Style and Layout
+;Should try to keep as much of the GUI dependent on an initial coordinate, it makes adding things much easier! The exception to this would be columns, read in Tab 1
+;Another exception would be hidden buttons/fields, you'd want the hidden fields to have the same coordinates.
 Gui, Font, s32 Bold Underline, Arial
 Gui, Add, Text, x56 y8 w410 h69, A U T O M A T O N
 Gui, Font
@@ -32,8 +34,8 @@ Gui, Add, Button, x16 y360 w80, Ok
 Gui, Add, Tab3, x16 y80 w492 h271, Setup|Mode|Breaks|Config|Info
 ;Tab 1
 Gui, Tab, 1
-;Column One
 Gui, Add, Text, x40 y120 w400 h13, Use the latest UI with scaling set at 90`% and opacity set at 100`% ;needed to escape the percent sign
+;Column One -- The start of each column should be a persistent coordinate and separated! Everything else should be coordinate dependent on the top row of the column!
 Gui, Add, Text, x40 y140 w120 h13, Username:
 Gui, Add, ComboBox, x40 y+10 w120 vUsername, Auto
 Gui, Add, Text, x40 y+10 w120 h13, Improve Bind:
@@ -44,20 +46,17 @@ Gui, Add, Text, x40 y+10 w120 h13, Number of Actions:
 Gui, Add, Edit, x40 y+5 w27 h21 vActions 0x2000, 3 ;only allows numbers
 ;Column Two
 Gui, Add, Text, x240 y140 w150 h13, MineForward/DigtoPile bind:
-Gui, Add, Edit, x240 y+5 w150 h21 vMineDig 0x10, m ;only allows lowercase letters
+Gui, Add, Edit, x240 y+10 w150 h21 vMineDig 0x10, m ;only allows lowercase letters
 ;Tab 2
 Gui, Tab, 2
-
 Gui, Add, Text, x40 y120 w400 h13, Script Mode (Pick One):
-Gui, Add, DropDownList, x40 y140 w120 h21 r6 gSMode vScriptMode Sort, Improving|Gathering|World Interaction
-
+Gui, Add, DropDownList, x40 y+10 w120 h21 r6 gSMode vScriptMode Sort, Improving|Gathering|World Interaction
 Gui, Add, Text, x40 y170 w400 h13 vImpTypeText Hidden, Improvement Type (Pick One):
-Gui, Add, DropDownList, x40 y190 w120 h21 r6 vImpType Sort Hidden, Carpentry|Cloth Tailoring|Leatherworking|Masonry|Smithing|Pottery
+Gui, Add, DropDownList, x40 y+10 w120 h21 r6 vImpType Sort Hidden, Carpentry|Cloth Tailoring|Leatherworking|Masonry|Smithing|Pottery
 Gui, Add, Text, x40 y170 w400 h13 vGatherTypeText Hidden, Gathering Type (Pick One):
-Gui, Add, DropDownList, x40 y190 w120 h21 r6 vGatherType Sort Hidden, Wall-Miner/Dig to Pile|
-
+Gui, Add, DropDownList, x40 y+10 w120 h21 r6 vGatherType Sort Hidden, Wall-Miner/Dig to Pile|
 Gui, Add, Text, x40 y220 w400 h13 vImpStyleText Hidden, Improvement Style (Pick One):
-Gui, Add, DropDownList, x40 y240 w120 h21 r3 vImpStyle Sort Hidden, Pile of Same Items|Singular Item|World Item
+Gui, Add, DropDownList, x40 y+10 w120 h21 r3 vImpStyle Sort Hidden, Pile of Same Items|Singular Item|World Item
 ;Tab 3
 Gui, Tab, 3
 Gui, Add, CheckBox, x40 y120 w400 h13 vAutismMode gAutism, Autism Mode
