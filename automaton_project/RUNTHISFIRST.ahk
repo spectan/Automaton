@@ -110,22 +110,23 @@ if (AutismMode = 1) {
 else {
     GuiControl, Enable, Testing
 }
+Return
 
 
-*/
 GuiClose:
 ExitApp
 Return
 ButtonOK:
 GuiEscape:
-Gui, Submit  ; Saves the contents above to the variables specified.
-
+Gui, Submit
 ;Saves all .ini settings
 ;Could possibly set it up so each tab is under a different section, but was too lazy.
 varSaver := "Username,Improve,Repair,Actions,ImpType,GatherType,ImpStyle"
 loop, parse, varSaver, `,
     IniWrite, % %A_LoopField%, %A_ScriptDir%\include\config.ini, Setup, % A_LoopField
 Return
+
+
 ;MsgBox Actions = %Actions%, Improve = %Improve%, Repair = %Repair%, Username = %Username%, ImproveType = %ImpType%, ImproveMode = %ImpStyle% ;Debug for verifying variables saved appropriately
 ;END OF SETUP
 ;
