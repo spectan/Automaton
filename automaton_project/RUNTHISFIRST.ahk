@@ -32,15 +32,19 @@ Gui, Add, Button, x16 y360 w80, Ok
 Gui, Add, Tab3, x16 y80 w492 h271, Setup|Mode|Breaks|Config|Info
 ;Tab 1
 Gui, Tab, 1
+;Column One
 Gui, Add, Text, x40 y120 w400 h13, Use the latest UI with scaling set at 90`% and opacity set at 100`% ;needed to escape the percent sign
-Gui, Add, Text, x40 y150 w120 h13, Username:
-Gui, Add, ComboBox, x40 y170 w120 vUsername, Auto
-Gui, Add, Text, x40 y200 w120 h13, Improve Bind:
-Gui, Add, Edit, x40 y220 w120 h21 vImprove 0x10, i ;only allows lowercase letters
-Gui, Add, Text, x40 y250 w120 h13, Repair Bind:
-Gui, Add, Edit, x40 y270 w120 h21 vRepair 0x10, r ;only allows lowercase letters
-Gui, Add, Text, x40 y300 w120 h13, Number of Actions:
-Gui, Add, Edit, x40 y320 w27 h21 vActions 0x2000, 3 ;only allows numbers
+Gui, Add, Text, x40 y140 w120 h13, Username:
+Gui, Add, ComboBox, x40 y+10 w120 vUsername, Auto
+Gui, Add, Text, x40 y+10 w120 h13, Improve Bind:
+Gui, Add, Edit, x40 y+5 w120 h21 vImprove 0x10, i ;only allows lowercase letters
+Gui, Add, Text, x40 y+10 w120 h13, Repair Bind:
+Gui, Add, Edit, x40 y+5 w120 h21 vRepair 0x10, r ;only allows lowercase letters
+Gui, Add, Text, x40 y+10 w120 h13, Number of Actions:
+Gui, Add, Edit, x40 y+5 w27 h21 vActions 0x2000, 3 ;only allows numbers
+;Column Two
+Gui, Add, Text, x240 y140 w150 h13, MineForward/DigtoPile bind:
+Gui, Add, Edit, x240 y+5 w150 h21 vMineDig 0x10, m ;only allows lowercase letters
 ;Tab 2
 Gui, Tab, 2
 
@@ -121,7 +125,7 @@ GuiEscape:
 Gui, Submit
 ;Saves all .ini settings
 ;Could possibly set it up so each tab is under a different section, but was too lazy.
-varSaver := "Username,Improve,Repair,Actions,ImpType,GatherType,ImpStyle"
+varSaver := "Username,Improve,Repair,MineDig,Actions,ImpType,GatherType,ImpStyle" ;THIS MUST BE THE SAME IN EVERY SCRIPT THAT WILL READ THIS INI!!!! VERY IMPORTANT. NO SPACES
 loop, parse, varSaver, `,
     IniWrite, % %A_LoopField%, %A_ScriptDir%\include\config.ini, Setup, % A_LoopField
 Return
@@ -137,10 +141,11 @@ F5::
 If (ScriptMode = "Improving") {
     Run Imper.ahk
 }
-/*
+
 If (ScriptMode = "Gathering") {
     Run Gatherer.ahk
 }
+/*
 If (ScriptMode = "World Interaction") {
     Run WorldInt.ahk
 }
