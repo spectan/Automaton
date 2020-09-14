@@ -13,9 +13,19 @@ SetTitleMatchMode 2
 #WinActivateForce
 #Include, %A_ScriptDir%\include\helpers.ahk
 
-;Starts GUI
+
+
 F4::
-;added comments so this isn't a fucking word bubble
+
+;Starts GUI
+;Toolbelt presets for use within the GUI, they have to be located before the script!
+carpTools = |mallet|pelt|log|carvingknife|file
+smithTools = |whetstone|pelt|hammer|water|lump
+clothTools = |scissors|string|needle|water
+lwTools = |needle|awl|leatherknife|mallet|leather
+masonTools = |rockshard|chisel
+potteryTools = |clayshaper|clay ;what fucking tools does this use
+miscTools = |chest|satchel|bow|meal|water
 
 I_Icon = %A_ScriptDir%\include\peepo.ico
 ICON [I_Icon]
@@ -32,7 +42,7 @@ Gui, Font
 Gui, Add, Picture, x528 y18 w399 h361, %A_ScriptDir%\include\peepo.jpg
 Gui, Add, Button, x16 y360 w80, Ok
 Gui, Add, Tab3, x16 y80 w492 h271, Setup|Mode|Breaks|Config|Info
-;Tab 1
+;Tab 1 - General UI config
 Gui, Tab, 1
 Gui, Add, Text, x40 y120 w400 h13, Use the latest UI with scaling set at 90`% and opacity set at 100`% ;needed to escape the percent sign
 ;Column One -- The start of each column should be a persistent coordinate and separated! Everything else should be coordinate dependent on the top row of the column!
@@ -47,12 +57,12 @@ Gui, Add, Edit, x40 y+5 w27 h21 vActions 0x2000, 3 ;only allows numbers
 ;Column Two
 Gui, Add, Text, x240 y140 w150 h13, MineForward/DigtoPile bind:
 Gui, Add, Edit, x240 y+10 w150 h21 vMineDig 0x10, m ;only allows lowercase letters
-;Tab 2
+;Tab 2 - What scripts to run
 Gui, Tab, 2
 Gui, Add, Text, x40 y120 w400 h13, Script Mode (Pick One):
-Gui, Add, DropDownList, x40 y+10 w120 h21 r6 gSMode vScriptMode Sort, Improving|Gathering|World Interaction
+Gui, Add, DropDownList, x40 y+10 w120 h21 r6 gToolbeltConfig gSMode vScriptMode Sort, Improving|Gathering|World Interaction
 Gui, Add, Text, x40 y170 w400 h13 vImpTypeText Hidden, Improvement Type (Pick One):
-Gui, Add, DropDownList, x40 y+10 w120 h21 r6 vImpType Sort Hidden, Carpentry|Cloth Tailoring|Leatherworking|Masonry|Smithing|Pottery
+Gui, Add, DropDownList, x40 y+10 w120 h21 r6 gToolbeltConfig vImpType Sort Hidden, Carpentry|Cloth Tailoring|Leatherworking|Masonry|Smithing|Pottery
 Gui, Add, Text, x40 y170 w400 h13 vGatherTypeText Hidden, Gathering Type (Pick One):
 Gui, Add, DropDownList, x40 y+10 w120 h21 r6 vGatherType Sort Hidden, Wall-Miner/Dig to Pile|
 Gui, Add, Text, x40 y220 w400 h13 vImpStyleText Hidden, Improvement Style (Pick One):
@@ -64,10 +74,28 @@ Gui, Add, GroupBox, x40 y140 w400 h100 vContainerBox
 Gui, Add, Text, x60 y170 w21 h13 vTesting, Testing
 ;need to add some sort of way to disable everything in container if autismmode is checked
 ;im thinking you can set a short medium and long break in ms
-;Tab 4
+;Tab 4 - Toolbelt Configuration
 Gui, Tab, 4
+;Column One
+Gui, Add, Text, x40 y120 w400 h13, Toolbelt Slot 1:
+Gui, Add, DropDownList, x40 y+10 w120 h21 r6 vSlotOne, %miscTools%
+Gui, Add, Text, x40 y170 w400 h13, Toolbelt Slot 2:
+Gui, Add, DropDownList, x40 y+10 w120 h21 r6 vSlotTwo, %miscTools%
+Gui, Add, Text, x40 y220 w400 h13, Toolbelt Slot 3:
+Gui, Add, DropDownList, x40 y+10 w120 h21 r6 vSlotThree, %miscTools%
+Gui, Add, Text, x40 y270 w400 h13, Toolbelt Slot 4:
+Gui, Add, DropDownList, x40 y+10 w120 h21 r6 vSlotFour, %miscTools%
+;Column Two
+Gui, Add, Text, x180 y120 w400 h13, Toolbelt Slot 5:
+Gui, Add, DropDownList, x180 y+10 w120 h21 r6 vSlotFive, %miscTools%
+Gui, Add, Text, x180 y170 w400 h13, Toolbelt Slot 6:
+Gui, Add, DropDownList, x180 y+10 w120 h21 r6 vSlotSix, %miscTools%
+Gui, Add, Text, x180 y220 w400 h13, Toolbelt Slot 7:
+Gui, Add, DropDownList, x180 y+10 w120 h21 r6 vSlotSeven, %miscTools%
+Gui, Add, Text, x180 y270 w400 h13, Toolbelt Slot 8:
+Gui, Add, DropDownList, x180 y+10 w120 h21 r6 vSlotEight, %miscTools%
 ;need to check out ini files, save curent selections and stuff to a file, and load configs back out again
-;Tab 5
+;Tab 5 - About
 Gui, Tab, 5
 Gui, Add, Text, x40 y120 w400 h13, Version: 0.10
 Gui, Add, Text, x40 y140 w400 h13, Updated: 13/09/2020
@@ -104,6 +132,45 @@ if (ScriptMode = "World Interaction") {
     GuiControl, Hide Disable, ImpStyleText
     GuiControl, Hide Disable, ImpStyle
 }
+Return
+
+;For configuring your own toolbelt for script use!
+;The tool lists are located at start of the script
+ToolbeltConfig:
+GuiControlGet, ScriptMode
+GuiControlGet, ImpType
+GuiControlGet, SlotOne
+if (ImpType = "Carpentry") {
+    GuiControl,,SlotOne, %carpTools%
+    GuiControl,,SlotTwo, %carpTools%
+    GuiControl,,SlotThree, %carpTools%
+    GuiControl,,SlotFour, %carpTools%
+    GuiControl,,SlotFive, %carpTools%
+}
+if (ImpType = "Cloth Tailoring") {
+    GuiControl,,SlotOne, %clothTools%
+    GuiControl,,SlotTwo, %clothTools%
+    GuiControl,,SlotThree, %clothTools%
+    GuiControl,,SlotFour, %clothTools%
+}
+if (ImpType = "Leatherworking") {
+    GuiControl,,SlotOne, %lwTools%
+    GuiControl,,SlotTwo, %lwTools%
+    GuiControl,,SlotThree, %lwTools%
+    GuiControl,,SlotFour, %lwTools%
+    GuiControl,,SlotFive, %lwTools%
+}
+if (ImpType = "Masonry") {
+    GuiControl,,SlotOne, %masonTools%
+    GuiControl,,SlotTwo, %masonTools%
+}
+if (ImpType = "Pottery") {
+    ;what fucking tools does this shit use
+}
+Return
+
+
+
 
 Autism:
 GuiControlGet, AutismMode
@@ -129,8 +196,12 @@ loop, parse, varSaver, `,
 {
     IniWrite, % %A_LoopField%, %A_ScriptDir%\include\config.ini, Setup, % A_LoopField
 }
+varSaverBelt := "SlotOne,SlotTwo,SlotThree,SlotFour,SlotFive,SlotSix,SlotSeven,SlotEight" ;THIS MUST BE THE SAME IN EVERY SCRIPT THAT WILL READ THIS INI!!!! VERY IMPORTANT. NO SPACES
+loop, parse, varSaverBelt, `,
+{
+    IniWrite, % %A_LoopField%, %A_ScriptDir%\include\config.ini, Toolbelt, % A_LoopField
+}
 Return
-
 
 ;MsgBox Actions = %Actions%, Improve = %Improve%, Repair = %Repair%, Username = %Username%, ImproveType = %ImpType%, ImproveMode = %ImpStyle% ;Debug for verifying variables saved appropriately
 ;END OF SETUP
@@ -150,36 +221,6 @@ If (ScriptMode = "Gathering") {
 If (ScriptMode = "World Interaction") {
     Run WorldInt.ahk
 }
-
-
-
-
-;Toolbelt Selector, set by the GUI.
-;Toolbelts (need to add a better way to configure this in the future)
-;need to look into .ini files, a toolbelt setup tab linked to the ini, and the second toolbelt setup for water food and lockpicks
-Toolbelt := 0
-;implemented switch statement, needs AHK [v1.1.31+] to work
-switch ImpType 
-{
-    case "Carpentry":
-        Toolbelt := {"log": 1, "carving": 2, "pelt": 3, "file": 4, "mallet": 5}
-    case "Cloth Tailoring":
-        Toolbelt := {"string": 1, "needle": 2, "scissors": 3, "water": 4}
-    case "Leatherworking":
-        Toolbelt := {"leather": 1, "needle": 2, "lknife": 3, "mallet": 4, "awl": 5}
-    case "Masonry":
-        Toolbelt := {"rockshard": 1, "chisel": 2}
-    case "Smithing":
-        Toolbelt := {"lump": 1, "hammer": 2, "pelt": 3, "whetstone": 4, "water": 5}
-    case "Pottery":
-        Toolbelt := {"clay": 1, "shaper": 2, "spatula": 3, "hand": 4, "water": 5}
-    default:
-        MsgBox, Some shit got fucked up
-}
-;Debug for testing array properly assigns to the variable
-
-For index, value in Toolbelt
-    MsgBox % "Item " index " is '" value "'"
 */
 
 F6::
