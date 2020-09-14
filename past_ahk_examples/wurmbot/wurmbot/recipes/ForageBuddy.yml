@@ -1,0 +1,16 @@
+# ForageBuddy v1
+# Foraging recipe by Tyler (lfanew)
+# https://github.com/lfanew
+---
+  ForageBuddy:
+    Attempt to forage:
+      action: press
+      params:
+        - 'g'
+      wait:
+        - busy
+    Wait until idle:
+      wait:
+        - idle
+      timeout: 30
+  

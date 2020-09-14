@@ -1,0 +1,20 @@
+rested: 
+  pos: 
+    - 215
+    - 64
+  color: 0xA7C04F
+fatigued: 
+  pos: 
+    - 8
+    - 64
+  color: 0x1A1611
+idle: 
+  pos: 
+    - 1083
+    - 901
+  color: 0x262725
+busy: 
+  pos: 
+    - 1083
+    - 901
+  color: 0x8CB9D0
