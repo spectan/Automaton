@@ -108,29 +108,30 @@ Return
 ;SCRIPT MODE inside the GUI -- For example, if you set the mode to "Improving" you will now be able to select your improvement mode like carpentry and style like pile-imper.
 SMode:
 GuiControlGet, ScriptMode
-if (ScriptMode = "Improving") {
-    GuiControl, Show Enable, ImpTypeText
-    GuiControl, Show Enable, ImpType
-    GuiControl, Hide Disable, GatherTypeText
-    GuiControl, Hide Disable, GatherType
-    GuiControl, Show Enable, ImpStyleText
-    GuiControl, Show Enable, ImpStyle
-}
-if (ScriptMode = "Gathering") {
-    GuiControl, Hide Disable, ImpTypeText
-    GuiControl, Hide Disable, ImpType
-    GuiControl, Show Enable, GatherTypeText
-    GuiControl, Show Enable, GatherType
-    GuiControl, Hide Disable, ImpStyleText
-    GuiControl, Hide Disable, ImpStyle
-}
-if (ScriptMode = "World Interaction") {
-    GuiControl, Hide Disable, ImpTypeText
-    GuiControl, Hide Disable, ImpType
-    GuiControl, Hide Disable, GatherTypeText
-    GuiControl, Hide Disable, GatherType
-    GuiControl, Hide Disable, ImpStyleText
-    GuiControl, Hide Disable, ImpStyle
+switch ScriptMode { ;needs AHK [v1.1.31+] to work
+    case "Improving":
+        GuiControl, Show Enable, ImpTypeText
+        GuiControl, Show Enable, ImpType
+        GuiControl, Hide Disable, GatherTypeText
+        GuiControl, Hide Disable, GatherType
+        GuiControl, Show Enable, ImpStyleText
+        GuiControl, Show Enable, ImpStyle
+    case "Gathering":
+        GuiControl, Hide Disable, ImpTypeText
+        GuiControl, Hide Disable, ImpType
+        GuiControl, Show Enable, GatherTypeText
+        GuiControl, Show Enable, GatherType
+        GuiControl, Hide Disable, ImpStyleText
+        GuiControl, Hide Disable, ImpStyle
+    case "World Interaction":
+        GuiControl, Hide Disable, ImpTypeText
+        GuiControl, Hide Disable, ImpType
+        GuiControl, Hide Disable, GatherTypeText
+        GuiControl, Hide Disable, GatherType
+        GuiControl, Hide Disable, ImpStyleText
+        GuiControl, Hide Disable, ImpStyle
+    default:
+        Msgbox Scriptmode unable to define itself properly
 }
 Return
 
@@ -139,38 +140,73 @@ Return
 ToolbeltConfig:
 GuiControlGet, ScriptMode
 GuiControlGet, ImpType
-GuiControlGet, SlotOne
-if (ImpType = "Carpentry") {
-    GuiControl,,SlotOne, %carpTools%
-    GuiControl,,SlotTwo, %carpTools%
-    GuiControl,,SlotThree, %carpTools%
-    GuiControl,,SlotFour, %carpTools%
-    GuiControl,,SlotFive, %carpTools%
-}
-if (ImpType = "Cloth Tailoring") {
-    GuiControl,,SlotOne, %clothTools%
-    GuiControl,,SlotTwo, %clothTools%
-    GuiControl,,SlotThree, %clothTools%
-    GuiControl,,SlotFour, %clothTools%
-}
-if (ImpType = "Leatherworking") {
-    GuiControl,,SlotOne, %lwTools%
-    GuiControl,,SlotTwo, %lwTools%
-    GuiControl,,SlotThree, %lwTools%
-    GuiControl,,SlotFour, %lwTools%
-    GuiControl,,SlotFive, %lwTools%
-}
-if (ImpType = "Masonry") {
-    GuiControl,,SlotOne, %masonTools%
-    GuiControl,,SlotTwo, %masonTools%
-}
-if (ImpType = "Pottery") {
-    ;what fucking tools does this shit use
+switch ScriptMode { ;needs AHK [v1.1.31+] to work. This also determines the scriptmode, similar to above and changes toolbelt accordingly. If imping, it will look at subskill. If gathering, it will use the miscTools instead.
+;It won't overwrite it if you previously select an improving subskill, need to find a way to clear a field on the fly.
+    case "Improving":
+        switch ImpType {
+            case "Carpentry":
+                GuiControl,,SlotOne, %carpTools%
+                GuiControl,,SlotTwo, %carpTools%
+                GuiControl,,SlotThree, %carpTools%
+                GuiControl,,SlotFour, %carpTools%
+                GuiControl,,SlotFive, %carpTools%
+                GuiControl,,SlotSix, %miscTools%
+                GuiControl,,SlotSeven, %miscTools%
+                GuiControl,,SlotEight, %miscTools%
+            case "Cloth Tailoring":
+                GuiControl,,SlotOne, %clothTools%
+                GuiControl,,SlotTwo, %clothTools%
+                GuiControl,,SlotThree, %clothTools%
+                GuiControl,,SlotFour, %clothTools%
+                GuiControl,,SlotFive, %miscTools%
+                GuiControl,,SlotSix, %miscTools%
+                GuiControl,,SlotSeven, %miscTools%
+                GuiControl,,SlotEight, %miscTools%
+            case "Leatherworking":
+                GuiControl,,SlotOne, %lwTools%
+                GuiControl,,SlotTwo, %lwTools%
+                GuiControl,,SlotThree, %lwTools%
+                GuiControl,,SlotFour, %lwTools%
+                GuiControl,,SlotFive, %lwTools%
+                GuiControl,,SlotSix, %miscTools%
+                GuiControl,,SlotSeven, %miscTools%
+                GuiControl,,SlotEight, %miscTools%
+            case "Masonry":
+                GuiControl,,SlotOne, %masonTools%
+                GuiControl,,SlotTwo, %masonTools%
+                GuiControl,,SlotThree, %miscTools%
+                GuiControl,,SlotFour, %miscTools%
+                GuiControl,,SlotFive, %miscTools%
+                GuiControl,,SlotSix, %miscTools%
+                GuiControl,,SlotSeven, %miscTools%
+                GuiControl,,SlotEight, %miscTools%
+            case "Smithing":
+                GuiControl,,SlotOne, %smithTools%
+                GuiControl,,SlotTwo, %smithTools%
+                GuiControl,,SlotThree, %smithTools%
+                GuiControl,,SlotFour, %smithTools%
+                GuiControl,,SlotFive, %smithTools%
+                GuiControl,,SlotSix, %miscTools%
+                GuiControl,,SlotSeven, %miscTools%
+                GuiControl,,SlotEight, %miscTools%
+            case "Pottery":
+                ;wtf does this even use
+            default:
+                MsgBox, Not able to fetch appropriate ImpType for ToolbeltConfig
+        }
+    case "Gathering":
+        GuiControl,,SlotOne, %miscTools%
+        GuiControl,,SlotTwo, %miscTools%
+        GuiControl,,SlotThree, %miscTools%
+        GuiControl,,SlotFour, %miscTools%
+        GuiControl,,SlotFive, %miscTools%
+        GuiControl,,SlotSix, %miscTools%
+        GuiControl,,SlotSeven, %miscTools%
+        GuiControl,,SlotEight, %miscTools%
+    default:
+        Msgbox Unable to define appropriate toolbelt per Scriptmode
 }
 Return
-
-
-
 
 Autism:
 GuiControlGet, AutismMode
