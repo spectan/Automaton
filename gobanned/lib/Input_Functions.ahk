@@ -255,18 +255,18 @@ ClickOnImage(imagename="", leftOrRight="left", prefoundX=0, prefoundY=0, transMo
 	return 0
 }
 
-DragMenuAItemXToMenuBItemY(menuA="", itemX="", menuB="", itemY="inventoryspace")
+DragMenuAItemXToMenuBItemY(menuA="", itemX="", menuB="", itemY="inventoryspace", itemXTransMode="*TransBlack", failOnNotFound=1)
 {
 	global stopLoop, stopReason
 	
 	; Store mouse
 	; mouse pos
 	
-	itemXFound := FindInMenu(menuA, itemX, "*TransBlack")
+	itemXFound := FindInMenu(menuA, itemX, itemXTransMode)
 	
 	If (itemXFound[1])
 	{
-		MoveMouseToImageRandom(itemX, itemXFound[2], itemXFound[3], "*TransBlack")
+		MoveMouseToImageRandom(itemX, itemXFound[2], itemXFound[3], itemXTransMode)
 		
 		itemYFound := FindInMenu(menuB, itemY)
 		If (itemYFound[1])
@@ -288,13 +288,19 @@ DragMenuAItemXToMenuBItemY(menuA="", itemX="", menuB="", itemY="inventoryspace")
 		}
 		Else
 		{
-			stopLoop := 1
-			stopReason := "Failed DragMenuAItemXToMenuBItemY: no " . itemY . " found"
+			If (failOnNotFound)
+			{
+				stopLoop := 1
+				stopReason := "Failed DragMenuAItemXToMenuBItemY: no " . itemY . " found"
+			}
 		}
 	}
 	Else
 	{
-		stopLoop := 1
-		stopReason := "Failed DragMenuAItemXToMenuBItemY: no " . itemX . " found"
+		If (failOnNotFound)
+		{
+			stopLoop := 1
+			stopReason := "Failed DragMenuAItemXToMenuBItemY: no " . itemX . " found"
+		}
 	}
 }

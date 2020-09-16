@@ -100,15 +100,21 @@ IsImpItem(imageName)
 	return ret
 }
 
-FindInLine(imageName)
+FindInLine(imageName, itemLineTopY=0, mouseX=0, transMode="*TransWhite")
 {
-	itemLineTopY := GetItemLineTop()
+	If (itemLineTopY = 0)
+	{
+		itemLineTopY := GetItemLineTop()
+	}
 	itemLineBottomY := itemLineTopY + 18
 	
 	CoordMode, Pixel, Window
-	MouseGetPos, mouseX, mouseY
+	If (mouseX = 0)
+	{
+		MouseGetPos, mouseX, mouseY
+	}
 	img := A_WorkingDir . "\images\" . imageName . ".png"
-	ImageSearch, FoundX, FoundY, mouseX, itemLineTopY, mouseX+400, itemLineBottomY, *5 *TransWhite %img%
+	ImageSearch, FoundX, FoundY, mouseX, itemLineTopY, mouseX+400, itemLineBottomY, *5 %transMode% %img%
 	If ErrorLevel = 0
 	{
 		ret := 1
@@ -233,6 +239,47 @@ FindInMenu(menuName="", targetName="", transMode="*TransWhite")
 		;stopReason := "Unable to find menu " . menuHeaderImageName	
 		return notFound
 	}
+}
+
+MenuAHasMoreThan100KgOfItemX(menuName="", targetName="")
+{
+	foundItem := FindInMenu(menuName, targetName)
+	
+	If (foundItem[1])
+	{
+		itemX := foundItem[2]
+		itemY := foundItem[3]
+		
+		lineY := itemY - 5
+		
+		is100kg := 0
+		variant := 1
+		
+		Loop
+		{
+			If (is100kg > 0 OR variant > 3)
+			{
+				Break
+			}
+			
+			imgName := "100kg" . variant
+			
+			found100kg := FindInLine(imgName, lineY, itemX, "*TransBlack")
+			
+			If (found100kg)
+			{
+				is100kg := 1
+			}
+
+			variant += 1
+		}
+		
+		If (is100kg)
+		{
+			return 1
+		}
+	}
+	return 0
 }
 
 GetImpItem(impItemCsv)
