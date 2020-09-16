@@ -241,6 +241,72 @@ FindInMenu(menuName="", targetName="", transMode="*TransWhite")
 	}
 }
 
+GetImageBounds(imageName="", leftX=0, topY=0)
+{
+	bound := []
+	bound[1] := 0
+	bound[2] := 0
+	bound[3] := 0
+	bound[4] := 0
+	bound[5] := 0
+	
+	found := GetImageCoords(imageName, leftX, topY)
+	
+	If (found[1])
+	{
+		size := GetImageSize(imagename)
+		
+		bound[1] := 1
+		bound[2] := found[2]
+		bound[3] := found[3]
+		bound[4] := found[2] + size[1]
+		bound[5] := found[3] + size[2]
+	}
+	
+	return bound
+}
+
+FindImageInImage(imageB="", imageA="", leftX=0, topY=0)
+{
+	global stopLoop, stopReason
+	
+	notFound := []
+	notFound[1] := 0
+
+	imageABounds := GetImageBounds(imageA, leftX, topY)
+	
+	If (imageABounds[1])
+	{
+		imageBCoords := GetImageCoords(imageB, imageABounds[2], imageABounds[3], imageABounds[4], imageABounds[5])
+		
+		If (imageBCoords[1])
+		{
+			size := GetImageSize(imageB)
+		
+			imageBBounds := []
+			imageBBounds[1] := 1
+			imageBBounds[2] := imageBCoords[2]
+			imageBBounds[3] := imageBCoords[3]
+			imageBBounds[4] := imageBCoords[2] + size[1]
+			imageBBounds[5] := imageBCoords[3] + size[2]
+		
+			return imageBBounds
+		}
+		Else
+		{
+			stopLoop := 1
+			stopReason := "FindImageInImage could not find imageB " . imageB . " within imageA " . imageA
+		}
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "FindImageInImage could not find imageA " . imageA
+	}
+	
+	return notFound
+}
+
 MenuAHasMoreThan100KgOfItemX(menuName="", targetName="")
 {
 	foundItem := FindInMenu(menuName, targetName)

@@ -402,6 +402,59 @@ ClearEventTab()
 	}
 }
 
+WithdrawFromBSB(imageName)
+{
+	global stopLoop, stopReason
+
+	DragMenuAItemXToMenuBItemY("bsbheader", "stoneshardtransblack", "inventoryheader", "inventoryspace", "*TransBlack")
+	WaitUntilRemovingItems()
+	
+	foundSend := FindInMenu("removingitemsheader", "bsbsendbutton")
+	
+	If (foundSend[1])
+	{
+		ClickOnImage("bsbsendbutton", "left", foundSend[2], foundSend[3])
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Send not found when removing items from bsb"
+	}
+}
+
+MoveItemFromInventoryToCraftingWindow(item, combineItems=0)
+{
+	stoneFound := FindInMenu("inventoryheader", "stoneshardtransblack", "*TransBlack")
+	
+	If (stoneFound[1])
+	{
+		MoveMouseToImageRandom("stoneshardtransblack", stoneFound[2], stoneFound[3], "*TransBlack")
+		
+		craftingBox := FindImageInImage("craftingwindowbox", "craftingwindowright")
+		
+		If (craftingBox[1])
+		{
+			ClickDragToBounds(craftingBox[2], craftingBox[3], craftingBox[4], craftingBox[5])
+			
+			If (combineItems)
+			{
+				MouseGetPos, mouseX, mouseY
+				Random, xRand, -100, -30
+				Random, yRand, 30, 100
+				MoveMouseHumanlike(mouseX + xRand, mouseY + yRand)
+			
+				combine := FindImageInImage("craftingwindowcombine", "craftingwindowright")
+				
+				If (combine[1])
+				{
+					MoveMouseToBoundsRandom(combine[2], combine[3], combine[4], combine[5])
+					DoSingleClick()
+				}
+			}
+		}
+	}
+}
+
 DragArrowsToQuiver()
 {
 	global stopLoop, stopReason

@@ -220,7 +220,31 @@ MoveMouseToImageRandom(imageName="", preFoundX=0, preFoundY=0, transMode="*Trans
 		
 		return 0
 	}
+}
+
+MoveMouseToBoundsRandom(x1, y1, x2, y2, minSleep=300, maxSleep=600)
+{
+	leftX := x1
+	topY := y1
 	
+	width := x2 - x1
+	Random, xRand, 0, width - 4
+	height := y2 - y1
+	Random, yRand, 0, height - 4
+	
+	MoveMouseHumanlike(leftX + 2 + xRand, topY + 2 + yRand)
+	SleepRandom(minSleep, maxSleep)
+	
+	return 1
+}
+
+ClickDragToBounds(x1, y1, x2, y2)
+{
+	Click, Down
+	SleepRandom(300, 600)
+	MoveMouseToBoundsRandom(x1, y1, x2, y2)
+	Click, Up
+	SleepRandom(300, 600)
 }
 
 ClickOnImage(imagename="", leftOrRight="left", prefoundX=0, prefoundY=0, transMode="*TransWhite")
@@ -269,8 +293,10 @@ DragMenuAItemXToMenuBItemY(menuA="", itemX="", menuB="", itemY="inventoryspace",
 		MoveMouseToImageRandom(itemX, itemXFound[2], itemXFound[3], itemXTransMode)
 		
 		itemYFound := FindInMenu(menuB, itemY)
+
 		If (itemYFound[1])
 		{
+			
 			; Click hold
 			Click, Down
 			SleepRandom(300, 600)
