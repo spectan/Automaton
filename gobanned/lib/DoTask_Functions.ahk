@@ -4,6 +4,24 @@ DoConfiguredTask()
 	Do%task%()
 }
 
+DoDigClayToBSB()
+{
+	global maxQueue
+
+	If (MenuAHasMoreThan100KgOfItemX("pileheader", "clay") OR MenuAHasMoreThan100KgOfItemX("inventoryheader", "clay"))
+	{
+		;Roll to move clay at a random number of clay above 100kg at 1/3 chance per action queue
+		Random, rand, 0, 2
+		If (rand = 0)
+		{
+			Say("Moving clay")
+			DragMenuAItemXToMenuBItemY("pileheader", "clay", "bsbheader", "inventoryspace", "*TransWhite", 0)
+			DragMenuAItemXToMenuBItemY("inventoryheader", "clay", "bsbheader", "inventoryspace", "*TransWhite", 0)
+		}
+	}
+	DoKey("c", , maxQueue)
+}
+
 DoWoodcutting()
 {
 	global previousTaskAttemptWorked, maxQueue
