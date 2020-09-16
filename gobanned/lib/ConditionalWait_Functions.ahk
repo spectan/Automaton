@@ -10,6 +10,18 @@ WaitUntilCaveWallHovered()
 	}
 }
 
+WaitUntilRemovingItems()
+{
+	loopStartTime := A_TickCount
+	removingItems := ScreenSearch("removingitemsheader")
+	While (!removingItems AND (A_TickCount - loopStartTime < 5000))
+	{
+		Random, rand, 25, 75
+		Sleep, rand
+		removingItems := ScreenSearch("removingitemsheader")
+	}
+}
+
 WaitUntilCaveFloorNotFlatHovered()
 {
 	loopStartTime := A_TickCount

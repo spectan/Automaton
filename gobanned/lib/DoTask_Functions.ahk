@@ -4,6 +4,16 @@ DoConfiguredTask()
 	Do%task%()
 }
 
+DoBricker()
+{
+	If (!MouseIsOnImage("createcontinuebutton"))
+	{
+		MoveMouseToImageRandom("createcontinuebutton")
+	}
+	
+	DoSingleClick()
+}
+
 DoDigClayToBSB()
 {
 	global maxQueue

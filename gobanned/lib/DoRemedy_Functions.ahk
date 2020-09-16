@@ -55,12 +55,30 @@ DoConfiguredTaskRemedy(giveChance=0)
 		secondChance := 0
 		RemedyLevelCaveFloor()
 	}
+	Else If (task = "Bricker")
+	{
+		previousTaskAttemptWorked := 1
+		secondChance := 0
+		RemedyBricker()
+	}
 	Else
 	{
 		stopLoop := 1
 		stopReason := "Previous action failed, no remedy configured"
 	}
 	
+}
+
+RemedyBricker()
+{
+	; move bricks to bsb
+	DragMenuAItemXToMenuBItemY("inventoryheader", "stonebricktransblack", "bsbheader", "inventoryspace", "*TransBlack", 0)
+	
+	; pull stone from bsb
+	WithdrawFromBSB("stoneshardtransblack")
+	
+	; move inventory stone to craftingwindowright box
+	MoveItemFromInventoryToCraftingWindow("stoneshardtransblack", 1)
 }
 
 RemedyArchery()
