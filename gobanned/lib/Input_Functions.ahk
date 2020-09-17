@@ -196,7 +196,16 @@ MoveMouseToImageRandom(imageName="", preFoundX=0, preFoundY=0, transMode="*Trans
 {
 	global stopLoop, stopReason
 
-	imageFound := GetImageCoords(imageName, Max(0, preFoundX-1), Max(0,preFoundY-1), , , transMode)
+	imageFound := []
+	imageFound[1] := 1
+	imageFound[2] := preFoundX
+	imageFound[3] := preFoundY
+	
+	If (preFoundX = 0 OR preFoundY = 0)
+	{
+		imageFound := GetImageCoords(imageName, Max(0, preFoundX-1), Max(0,preFoundY-1), , , transMode)
+	}
+	
 	If (imageFound[1])
 	{
 		imageX := imageFound[2]
@@ -247,11 +256,11 @@ ClickDragToBounds(x1, y1, x2, y2)
 	SleepRandom(300, 600)
 }
 
-ClickOnImage(imagename="", leftOrRight="left", prefoundX=0, prefoundY=0, transMode="*TransWhite")
+ClickOnImage(imagename="", leftOrRight="left", preFoundX=0, preFoundY=0, transMode="*TransWhite")
 {
 	SleepRandom(300,500)
 		
-	If (MoveMouseToImageRandom(imageName, prefoundX, prefoundY, transMode))
+	If (MoveMouseToImageRandom(imageName, preFoundX, preFoundY, transMode))
 	{
 		If (leftOrRight = "right")
 		{
