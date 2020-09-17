@@ -11,12 +11,8 @@ SendMode Input
 #SingleInstance Force
 SetTitleMatchMode 2
 #WinActivateForce
-#Include, %A_ScriptDir%\include\helpers.ahk
-
-
 
 F4::
-
 ;Starts GUI
 ;Toolbelt presets for use within the GUI, they have to be located before the script!
 carpTools = |mallet|pelt|log|carvingknife|file
@@ -41,6 +37,7 @@ Gui, Add, Text, x56 y8 w410 h69, A U T O M A T O N
 Gui, Font
 Gui, Add, Picture, x528 y18 w399 h361, %A_ScriptDir%\include\peepo.jpg
 Gui, Add, Button, x16 y360 w80, Ok
+Gui, Add, Text, x+10 y365, Hit Ok to start, F5 to run afterwards, F12 is emergency stop/restart.
 Gui, Add, Tab3, x16 y80 w492 h271, Setup|Mode|Breaks|Config|Info
 ;Tab 1 - General UI config
 Gui, Tab, 1
@@ -55,8 +52,8 @@ Gui, Add, Edit, x40 y+5 w120 h21 vRepair 0x10, r ;only allows lowercase letters
 Gui, Add, Text, x40 y+10 w120 h13, Number of Actions:
 Gui, Add, Edit, x40 y+5 w27 h21 vActions 0x2000, 3 ;only allows numbers
 ;Column Two
-Gui, Add, Text, x240 y140 w150 h13, MineForward/DigtoPile bind:
-Gui, Add, Edit, x240 y+10 w150 h21 vMineDig 0x10, m ;only allows lowercase letters
+Gui, Add, Text, x240 y140 w150 h13, MineForward bind:
+Gui, Add, Edit, x240 y+10 w150 h21 vMine 0x10, m ;only allows lowercase letters
 ;Tab 2 - What scripts to run
 Gui, Tab, 2
 Gui, Add, Text, x40 y120 w400 h13, Script Mode (Pick One):
@@ -64,7 +61,7 @@ Gui, Add, DropDownList, x40 y+10 w120 h21 r6 gToolbeltConfig gSMode vScriptMode 
 Gui, Add, Text, x40 y170 w400 h13 vImpTypeText Hidden, Improvement Type (Pick One):
 Gui, Add, DropDownList, x40 y+10 w120 h21 r6 gToolbeltConfig vImpType Sort Hidden, Carpentry|Cloth Tailoring|Leatherworking|Masonry|Smithing|Pottery
 Gui, Add, Text, x40 y170 w400 h13 vGatherTypeText Hidden, Gathering Type (Pick One):
-Gui, Add, DropDownList, x40 y+10 w120 h21 r6 vGatherType Sort Hidden, Wall-Miner/Dig to Pile|
+Gui, Add, DropDownList, x40 y+10 w120 h21 r6 vGatherType Sort Hidden, Wall Miner|Dig To Pile
 Gui, Add, Text, x40 y220 w400 h13 vImpStyleText Hidden, Improvement Style (Pick One):
 Gui, Add, DropDownList, x40 y+10 w120 h21 r3 vImpStyle Sort Hidden, Pile of Same Items|Singular Item|World Item
 ;Tab 3
@@ -227,7 +224,7 @@ GuiEscape:
 Gui, Submit
 ;Saves all .ini settings
 ;Could possibly set it up so each tab is under a different section, but was too lazy.
-varSaver := "Username,Improve,Repair,MineDig,Actions,ImpType,GatherType,ImpStyle" ;THIS MUST BE THE SAME IN EVERY SCRIPT THAT WILL READ THIS INI!!!! VERY IMPORTANT. NO SPACES
+varSaver := "Username,Improve,Repair,Mine,Actions,ImpType,GatherType,ImpStyle" ;THIS MUST BE THE SAME IN EVERY SCRIPT THAT WILL READ THIS INI!!!! VERY IMPORTANT. NO SPACES
 loop, parse, varSaver, `,
 {
     IniWrite, % %A_LoopField%, %A_ScriptDir%\include\config.ini, Setup, % A_LoopField
@@ -237,32 +234,20 @@ loop, parse, varSaverBelt, `,
 {
     IniWrite, % %A_LoopField%, %A_ScriptDir%\include\config.ini, Toolbelt, % A_LoopField
 }
-Return
-
 ;MsgBox Actions = %Actions%, Improve = %Improve%, Repair = %Repair%, Username = %Username%, ImproveType = %ImpType%, ImproveMode = %ImpStyle% ;Debug for verifying variables saved appropriately
-;END OF SETUP
-;
 
-
-F5::
 ;Launches script based on setting
 If (ScriptMode = "Improving") {
     Run Imper.ahk
 }
-
 If (ScriptMode = "Gathering") {
     Run Gatherer.ahk
 }
-/*
 If (ScriptMode = "World Interaction") {
     Run WorldInt.ahk
 }
-*/
-
-F6::
-Run RUNTHISFIRST.ahk ;test run
-
-Return
+ExitApp
 
 F12::
-ExitApp
+Run RUNTHISFIRST.ahk
+Return
