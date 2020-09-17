@@ -116,3 +116,32 @@ MoveMouseHumanlike(x, y, mouseTime=0)
 	RandomBezier(0, 0, x, y, "T" . mouseTime . " RO P3")
 	randSleep(200, 500)
 }
+
+;Incorporates the below functions to generate a random movement when moving to an image.
+MoveMouseToImageRandom(imageName="")
+{
+	imageFound := GetImageCoords(imageName)
+	If (imageFound[1])
+	{
+		imageX := imageFound[2]
+		imageY := imageFound[3]
+ 
+		imageSize := GetImageSize(imageName)
+		imageWidth := imageSize[1]
+		Random, imageXRand, 0, imageWidth - 4
+		imageHeight := imageSize[2]
+		Random, imageYRand, 0, imageHeight - 4
+ 
+		MoveMouseHumanlike(imageX + 2 + imageXRand, imageY + 2 + imageYRand)
+		randSleep(300, 600)
+	}
+}
+
+activeItemRepair(repairBind) {
+    Random, rand, 1, 2
+    If (rand = 2) {
+        MoveMouseToImageRandom(activeitem)
+        randSleep(30,100)
+        doKey(repairBind)
+    }
+}
