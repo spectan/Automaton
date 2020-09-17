@@ -8,18 +8,20 @@ WaitUntilCaveWallHovered()
 		Sleep, rand
 		caveWallHovered := CaveWallHovered()
 	}
+	SleepRandom(100, 300)
 }
 
 WaitUntilRemovingItems()
 {
 	loopStartTime := A_TickCount
 	removingItems := ScreenSearch("removingitemsheader")
-	While (!removingItems AND (A_TickCount - loopStartTime < 5000))
+	While (!removingItems AND (A_TickCount - loopStartTime < 10000))
 	{
 		Random, rand, 25, 75
 		Sleep, rand
 		removingItems := ScreenSearch("removingitemsheader")
 	}
+	SleepRandom(100, 300)
 }
 
 WaitUntilCaveFloorNotFlatHovered()
@@ -40,6 +42,7 @@ WaitUntilCaveFloorNotFlatHovered()
 		
 		caveFloorNotFlatHovered := caveFloorHovered AND !caveFloorFlatHovered
 	}
+	SleepRandom(100, 300)
 }
 
 WaitForRefreshing()
@@ -71,6 +74,7 @@ WaitUntilIdle(maxPreWait=2000)
 	{
 		isIdle := isIdle()
 	}
+	SleepRandom(100, 300)
 }
 
 WaitUntilFasted()
@@ -83,4 +87,5 @@ WaitUntilFasted()
 		Sleep, rand
 		fasted := HasFasted()
 	}
+	SleepRandom(100, 300)
 }

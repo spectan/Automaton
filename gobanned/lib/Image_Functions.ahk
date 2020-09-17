@@ -1,6 +1,18 @@
 ScreenSearch(imageName, variance=5, trans="", x1=0, y1=0, x2=1920, y2=1080)
 {
 	global FoundX, FoundY
+	
+	;Get the actual max bounds for the window
+	WinGetPos, x, y, w, h, Wurm Online
+	If (x2 = 1920)
+	{
+		x2 := w
+	}
+	If (y2 = 1080)
+	{
+		y2 := h
+	}
+	
 	img := A_WorkingDir . "\images\" . imageName . ".png"
 	CoordMode, Pixel, Window
 	ImageSearch, FoundX, FoundY, x1, y1, x2, y2, %trans% *%variance% %img%
@@ -46,6 +58,17 @@ GetImageCoords(imageName="", x1=0, y1=0, x2=1920, y2=1080, transMode="*TransWhit
 	ret[2] := 0
 	ret[3] := 0
 	
+	;Get the actual max bounds for the window
+	WinGetPos, x, y, w, h, Wurm Online
+	If (x2 = 1920)
+	{
+		x2 := w
+	}
+	If (y2 = 1080)
+	{
+		y2 := h
+	}
+	
 	img := A_WorkingDir . "\images\" . imageName . ".png"
 	CoordMode, Pixel, Window
 	ImageSearch, foundX, foundY, x1, y1, x2, y2, %transMode% *%variance% %img%
@@ -55,7 +78,6 @@ GetImageCoords(imageName="", x1=0, y1=0, x2=1920, y2=1080, transMode="*TransWhit
 		ret[2] := foundX
 		ret[3] := foundY
 	}
-
 	return ret
 }
 
@@ -126,6 +148,7 @@ FindInLine(imageName, itemLineTopY=0, mouseX=0, transMode="*TransWhite")
 	return ret
 }
 
+;Find by upper right x (can run into other windows)
 GetMenuCoords(menuHeaderImageName="")
 {
 	global stopLoop, stopReason
@@ -182,6 +205,67 @@ GetMenuCoords(menuHeaderImageName="")
 	return menuFound
 }
 
+;Find by bottom left corner (bounds a column for the bottom left corner)
+GetMenuCoords2(menuHeaderImageName="")
+{
+	global stopLoop, stopReason
+	
+	menuFound := []
+	menuFound[1] := 0
+	menuFound[2] := 0
+	menuFound[3] := 0
+	menuFound[4] := 0
+	menuFound[5] := 0
+	
+	menuHeader := GetImageCoords(menuHeaderImageName)
+	
+	If (menuHeader[1])
+	{
+		menuFound[2] := menuHeader[2]
+		menuFound[3] := menuHeader[3]
+
+		size := GetImageSize(menuHeaderImageName)
+		
+		menuBottomLeft := GetImageCoords("menubottomleft", menuFound[2]-20, menuFound[3], menuFound[2] + size[1])
+		
+		If (menuBottomLeft[1])
+		{
+			menuBottomLeftX := menuBottomLeft[2]
+			menuBottomLeftY := menuBottomLeft[3]
+			
+			size := GetImageSize("menuBottomLeft")
+			
+			menuCorner := GetImageCoords("menucorner", menuBottomLeftX, menuBottomLeftY)
+			
+			If (menuCorner[1])
+			{
+				menuFound[4] := menuCorner[2]
+				menuFound[5] := menuCorner[3]
+				
+				menuFound[1] := 1
+			}
+			Else
+			{
+				;stopLoop := 1
+				;stopReason := "Unable to find menu corner " . menuHeaderImageName
+			}
+		}
+		Else
+		{
+			;stopLoop := 1
+			;stopReason := "Unable to find menubottomleft for " . menuHeaderImageName
+		}
+	}
+	Else
+	{
+		;stopLoop := 1
+		;stopReason := "Unable to find menu " . menuHeaderImageName
+	}
+	
+	;MsgBox % "stopReason=" . stopReason . " found=" . menuFound[1] . " x1=" . menuFound[2] . " y1=" . menuFound[3] . " x2=" . menuFound[4] . " y2=" . menuFound[5]
+	return menuFound
+}
+
 GetItemLineTop(mouseX=0, mouseY=0)
 {
 	global stopLoop, stopReason, impWorldObject
@@ -227,7 +311,7 @@ FindInMenu(menuName="", targetName="", transMode="*TransWhite")
 	notFound := []
 	notFound[1] := 0
 
-	menuCoords := GetMenuCoords(menuName)
+	menuCoords := GetMenuCoords2(menuName)
 	
 	If (menuCoords[1])
 	{

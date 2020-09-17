@@ -103,6 +103,7 @@ MoveMouseHumanlike(x, y, mouseTime=0)
 			Random, mouseTime, 300, 600
 		}
 	}
+	
 	RandomBezier(0, 0, x, y, "T" . mouseTime . " RO P3")
 	SleepRandom(200, 500)
 }
