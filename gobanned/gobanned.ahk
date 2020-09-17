@@ -24,7 +24,7 @@ SetBatchLines -1
 
 ;Configuration
 ;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker
-task := "DigClayToBSB"
+task := "Bricker"
 maxQueue := 2
 actionKey := "T"
 
@@ -105,7 +105,19 @@ MsgBox, 0, ,
 
 ;F2 Hotkey for testing functions
 F2::
-MoveItemFromInventoryToCraftingWindow("stoneshardtrasnblack", 1)
+	menuCoords := GetMenuCoords2("bsbheader")
+	
+	If (menuCoords[1])
+	{
+		x1 := menuCoords[2]
+		y1 := menuCoords[3]
+		x2 := menuCoords[4]
+		y2 := menuCoords[5]
+		MsgBox, bsbheader bounds: %x1%, %y1%, %x2%, %y2%
+	}
+	
+	MoveMouseHumanlike(menuCoords[2], menuCoords[3])
+	MoveMouseHumanlike(menuCoords[4], menuCoords[5])
 Return
 
 F5::
