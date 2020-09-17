@@ -100,15 +100,21 @@ IsImpItem(imageName)
 	return ret
 }
 
-FindInLine(imageName)
+FindInLine(imageName, itemLineTopY=0, mouseX=0, transMode="*TransWhite")
 {
-	itemLineTopY := GetItemLineTop()
+	If (itemLineTopY = 0)
+	{
+		itemLineTopY := GetItemLineTop()
+	}
 	itemLineBottomY := itemLineTopY + 18
 	
 	CoordMode, Pixel, Window
-	MouseGetPos, mouseX, mouseY
+	If (mouseX = 0)
+	{
+		MouseGetPos, mouseX, mouseY
+	}
 	img := A_WorkingDir . "\images\" . imageName . ".png"
-	ImageSearch, FoundX, FoundY, mouseX, itemLineTopY, mouseX+400, itemLineBottomY, *5 *TransWhite %img%
+	ImageSearch, FoundX, FoundY, mouseX, itemLineTopY, mouseX+400, itemLineBottomY, *5 %transMode% %img%
 	If ErrorLevel = 0
 	{
 		ret := 1
@@ -233,6 +239,113 @@ FindInMenu(menuName="", targetName="", transMode="*TransWhite")
 		;stopReason := "Unable to find menu " . menuHeaderImageName	
 		return notFound
 	}
+}
+
+GetImageBounds(imageName="", leftX=0, topY=0)
+{
+	bound := []
+	bound[1] := 0
+	bound[2] := 0
+	bound[3] := 0
+	bound[4] := 0
+	bound[5] := 0
+	
+	found := GetImageCoords(imageName, leftX, topY)
+	
+	If (found[1])
+	{
+		size := GetImageSize(imagename)
+		
+		bound[1] := 1
+		bound[2] := found[2]
+		bound[3] := found[3]
+		bound[4] := found[2] + size[1]
+		bound[5] := found[3] + size[2]
+	}
+	
+	return bound
+}
+
+FindImageInImage(imageB="", imageA="", leftX=0, topY=0)
+{
+	global stopLoop, stopReason
+	
+	notFound := []
+	notFound[1] := 0
+
+	imageABounds := GetImageBounds(imageA, leftX, topY)
+	
+	If (imageABounds[1])
+	{
+		imageBCoords := GetImageCoords(imageB, imageABounds[2], imageABounds[3], imageABounds[4], imageABounds[5])
+		
+		If (imageBCoords[1])
+		{
+			size := GetImageSize(imageB)
+		
+			imageBBounds := []
+			imageBBounds[1] := 1
+			imageBBounds[2] := imageBCoords[2]
+			imageBBounds[3] := imageBCoords[3]
+			imageBBounds[4] := imageBCoords[2] + size[1]
+			imageBBounds[5] := imageBCoords[3] + size[2]
+		
+			return imageBBounds
+		}
+		Else
+		{
+			stopLoop := 1
+			stopReason := "FindImageInImage could not find imageB " . imageB . " within imageA " . imageA
+		}
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "FindImageInImage could not find imageA " . imageA
+	}
+	
+	return notFound
+}
+
+MenuAHasMoreThan100KgOfItemX(menuName="", targetName="")
+{
+	foundItem := FindInMenu(menuName, targetName)
+	
+	If (foundItem[1])
+	{
+		itemX := foundItem[2]
+		itemY := foundItem[3]
+		
+		lineY := itemY - 5
+		
+		is100kg := 0
+		variant := 1
+		
+		Loop
+		{
+			If (is100kg > 0 OR variant > 3)
+			{
+				Break
+			}
+			
+			imgName := "100kg" . variant
+			
+			found100kg := FindInLine(imgName, lineY, itemX, "*TransBlack")
+			
+			If (found100kg)
+			{
+				is100kg := 1
+			}
+
+			variant += 1
+		}
+		
+		If (is100kg)
+		{
+			return 1
+		}
+	}
+	return 0
 }
 
 GetImpItem(impItemCsv)

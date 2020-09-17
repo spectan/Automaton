@@ -23,8 +23,8 @@ SetBatchLines -1
 #Include ConditionalWait_Functions.ahk
 
 ;Configuration
-;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting
-task := "SurfaceMineFlat"
+;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker
+task := "Bricker"
 maxQueue := 2
 actionKey := "v"
 
@@ -105,6 +105,7 @@ MsgBox, 0, ,
 
 ;F2 Hotkey for testing functions
 F2::
+MoveItemFromInventoryToCraftingWindow("stoneshardtrasnblack", 1)
 Return
 
 F5::
