@@ -1,3 +1,7 @@
+#NoEnv
+SetWorkingDir %A_ScriptDir%
+#Include, %A_ScriptDir%\include\Gdip_All.ahk
+
 ;Base imagesearch function
 findImage(imageName="")
 {
@@ -17,6 +21,26 @@ isFullStam()
 {
     return findImage("stamfull")
 }
+
+findImageBMP(imageName="")
+{
+    global foundX, foundY
+    ret := 0
+    img := A_WorkingDir . "\images\" . imageName . ".bmp"
+    CoordMode, Pixel, Window
+    ImageSearch, foundX, foundY, 0, 0, %A_ScreenWidth%, %A_ScreenHeight%, *TransWhite *5 %img%
+    If ErrorLevel = 0
+    {
+        ret := 1
+    }
+    return ret
+}
+
+isFullStamBMP() 
+{
+    return findImageBMP("stamfull")
+}
+
 findItem(imageName="")
 {
     global foundX, foundY, locX, rowY
