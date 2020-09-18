@@ -156,6 +156,10 @@ RepairActiveToolIfDamaged()
 				AdvanceToCaveWall()
 			}
 		}
+		Else If (task = "Bricker")
+		{
+			MoveMouseToImageRandom("createcontinuebutton")
+		}
 		Else
 		{
 			Random, randX, -8, 8
@@ -253,6 +257,10 @@ DrinkWater()
 				{
 					AdvanceToCaveWall()
 				}
+			}
+			Else If (task = "Bricker")
+			{
+				MoveMouseToImageRandom("createcontinuebutton")
 			}
 			Else
 			{

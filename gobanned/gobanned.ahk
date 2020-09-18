@@ -24,7 +24,7 @@ SetBatchLines -1
 
 ;Configuration
 ;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker
-task := "ActionBell"
+task := "Bricker"
 maxQueue := 2
 actionKey := "T"
 
