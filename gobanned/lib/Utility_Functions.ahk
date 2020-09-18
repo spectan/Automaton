@@ -6,6 +6,15 @@ GetPlayerName()
 	return playerName
 }
 
+SevereAlarm(title="SEVERE ALARM", message="")
+{
+	global severeAlarmPlaying
+	severeAlarmPlaying := 1
+	SetTimer, SevereAlarmThread, 100
+	MsgBox, 4096, %title%, %message%
+	ExitApp
+}
+
 SleepRandom(minSleep, maxSleep)
 {
 	Random, rand, %minSleep%, %maxSleep%

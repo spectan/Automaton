@@ -24,9 +24,9 @@ SetBatchLines -1
 
 ;Configuration
 ;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker
-task := "Bricker"
+task := "ActionBell"
 maxQueue := 2
-actionKey := "v"
+actionKey := "T"
 
 ;Settings
 attentiveMode := 1
@@ -40,6 +40,7 @@ drinkWaterEnabled := 1
 tunnelLimit := 0
 alarmOnlyMode := 0
 enableLogout := 0
+whiteNameAlarmEnabled := 1
 alarm := 1 ;keep on so you know when macro stops
 
 
@@ -84,6 +85,7 @@ progressingFromBreakSoon := 0
 surfaceMineX := 0
 surfaceMineY := 0
 wasDoingAction := 0
+severeAlarmPlaying := 0
 
 
 ; need to refactor activatetoolbelt to take the tool name and toolbelt map so we can keep track of the currently active tool
@@ -105,13 +107,24 @@ MsgBox, 0, ,
 
 ;F2 Hotkey for testing functions
 F2::
-MoveItemFromInventoryToCraftingWindow("stoneshardtrasnblack", 1)
+global whiteNameAlarmEnabled
+If (whiteNameAlarmEnabled AND IsWhiteNameInLocal())
+{
+	;MsgBox, white name
+	SevereAlarm("LOCAL", Clipboard)
+	
+	;screenshotFile := A_WorkingDir . "\screenshots\localtrigger.png"
+	;Run, nircmd.exe savescreenshot %screenshotFile%
+	
+	;MsgBox, %Clipboard%
+}
+
 Return
 
 F5::
 Macro1:
 Say("Start")
-global stopLoop, wasDoingAction, carpentryToolbeltMap, drinkWaterEnabled, stopReason, surfaceMineX, surfaceMineY, optionalRepairEnabled, progressingFromBreakSoon, queueFinished, lastHadStamina, alarmOnlyMode, wallBroke, maxQueue, tilesMined, advancedTile, minesPerformed, didTunnelRemedy, logout, startTime, fourHourLimited, previousTaskAttemptWorked, actionFinished, archeryToolbeltMap, remedyUsed, alarm, secondChance, actionInitiated, enableLogout, enableWiggle
+global stopLoop, whiteNameAlarmEnabled, wasDoingAction, carpentryToolbeltMap, drinkWaterEnabled, stopReason, surfaceMineX, surfaceMineY, optionalRepairEnabled, progressingFromBreakSoon, queueFinished, lastHadStamina, alarmOnlyMode, wallBroke, maxQueue, tilesMined, advancedTile, minesPerformed, didTunnelRemedy, logout, startTime, fourHourLimited, previousTaskAttemptWorked, actionFinished, archeryToolbeltMap, remedyUsed, alarm, secondChance, actionInitiated, enableLogout, enableWiggle
 global isFullStamina, isQueued, isDoingAction, isNotDoingAction ;debug variables
 
 startTime := A_TickCount
@@ -125,6 +138,11 @@ If (impArrowMode)
 
 WinActivate, Wurm Online
 Sleep, 333
+
+If (whiteNameAlarmEnabled AND IsWhiteNameInLocal())
+{
+	SevereAlarm("LOCAL", Clipboard)
+}
 
 If (alarmOnlyMode)
 {
@@ -214,6 +232,11 @@ Loop
 	}
     IfWinActive, Wurm Online
     {
+		If (whiteNameAlarmEnabled AND IsWhiteNameInLocal())
+		{
+			SevereAlarm("LOCAL", Clipboard)
+		}
+	
 		If (task = "LevelCaveFloor" AND NoSpaceToMine())
 		{
 			stopLoop := 1
@@ -417,6 +440,15 @@ Return
 F4::
 Run gobanned.ahk
 Return
+
+SevereAlarmThread:
+	global severeAlarmPlaying
+	If (severeAlarmPlaying)
+	{
+		PlaySound("Snake")
+		Sleep, 900
+	}
+return
 
 F7::
 ExitApp

@@ -1,3 +1,34 @@
+IsWhiteNameInLocal()
+{
+	ret := 0
+
+	localCoords := GetImageCoords("localtab20top", , , , , "*TransBlack")
+	
+	If (localCoords[1])
+	{
+		localX1 := localCoords[2]
+		localY1 := localCoords[3] + 20
+		
+		size := GetImageSize("localtab20top")
+		
+		localX2 := localCoords[2] + size[1]
+		localY2 := localCoords[3] + size[2]
+		
+		If (ScreenSearch("whitepixel", 30, "*TransBlack", localX1, localY1, localX2, localY2))
+		{
+			screenshotFile := A_WorkingDir . "\screenshots\localtrigger.png"
+			Run, nircmd.exe savescreenshot %screenshotFile%
+			
+			MoveMouseToBoundsRandom(localX1+10, localY1+30, localX2-30, localY2-30, 0, 0, 200)
+			DoRightClick(50, 100)
+			MoveMouseToImageRandom("copytab", , , , 0, 0, 100)
+			DoLeftClick(50, 100)
+			ret := 1
+		}
+	}
+	return ret
+}
+
 IsIdle()
 {
 	return (!IsQueued() AND IsNotDoingAction())
