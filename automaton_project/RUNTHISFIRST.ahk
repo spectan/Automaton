@@ -20,7 +20,7 @@ smithTools = |whetstone|pelt|hammer|water|lump
 clothTools = |scissors|string|needle|water
 lwTools = |needle|awl|leatherknife|mallet|leather
 masonTools = |rockshard|chisel
-potteryTools = |clayshaper|clay ;what fucking tools does this use
+potteryTools = |clayshaper|hand|spatula|water|clay
 miscTools = |chest|satchel|bow|meal|water
 
 I_Icon = %A_ScriptDir%\include\peepo.ico
