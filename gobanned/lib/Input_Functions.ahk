@@ -55,24 +55,24 @@ DoClick(nTimes=1, duration=0, maxDelay=300)
 	}
 }
 
-DoLeftClick()
+DoLeftClick(minSleep=100, maxSleep=300)
 {
 	Random, duration, 25, 100
 	Click, down
 	PlaySound("Click1")
 	Sleep, %duration%
 	Click, up
-	SleepRandom(100, 300)
+	SleepRandom(minSleep, maxSleep)
 }
 
-DoRightClick()
+DoRightClick(minSleep=100, maxSleep=300)
 {
 	Random, duration, 25, 100
 	Click, down, right
 	PlaySound("Click1")
 	Sleep, %duration%
 	Click, up, right
-	SleepRandom(100, 300)
+	SleepRandom(minSleep, maxSleep)
 }
 
 MouseToRandomMiddle(radius=20)
@@ -193,7 +193,7 @@ MouseToArcheryIcon()
 	}
 }
 
-MoveMouseToImageRandom(imageName="", preFoundX=0, preFoundY=0, transMode="*TransWhite", minSleep=300, maxSleep=600)
+MoveMouseToImageRandom(imageName="", preFoundX=0, preFoundY=0, transMode="*TransWhite", minSleep=300, maxSleep=600, mouseTime=0)
 {
 	global stopLoop, stopReason
 
@@ -218,7 +218,7 @@ MoveMouseToImageRandom(imageName="", preFoundX=0, preFoundY=0, transMode="*Trans
 		imageHeight := imageSize[2]
 		Random, imageYRand, 0, imageHeight - 4
 		
-		MoveMouseHumanlike(imageX + 2 + imageXRand, imageY + 2 + imageYRand)
+		MoveMouseHumanlike(imageX + 2 + imageXRand, imageY + 2 + imageYRand, mouseTime)
 		SleepRandom(minSleep, maxSleep)
 		
 		return 1
@@ -232,7 +232,7 @@ MoveMouseToImageRandom(imageName="", preFoundX=0, preFoundY=0, transMode="*Trans
 	}
 }
 
-MoveMouseToBoundsRandom(x1, y1, x2, y2, minSleep=300, maxSleep=600)
+MoveMouseToBoundsRandom(x1, y1, x2, y2, minSleep=300, maxSleep=600, mouseTime=0)
 {
 	leftX := x1
 	topY := y1
@@ -242,7 +242,7 @@ MoveMouseToBoundsRandom(x1, y1, x2, y2, minSleep=300, maxSleep=600)
 	height := y2 - y1
 	Random, yRand, 0, height - 4
 	
-	MoveMouseHumanlike(leftX + 2 + xRand, topY + 2 + yRand)
+	MoveMouseHumanlike(leftX + 2 + xRand, topY + 2 + yRand, mouseTime)
 	SleepRandom(minSleep, maxSleep)
 	
 	return 1
