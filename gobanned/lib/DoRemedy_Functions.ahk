@@ -61,6 +61,12 @@ DoConfiguredTaskRemedy(giveChance=0)
 		secondChance := 0
 		RemedyBricker()
 	}
+	Else If (task = "KeyMoulds")
+	{
+		previousTaskAttemptWorked := 1
+		secondChance := 0
+		RemedyKeyMoulds()
+	}
 	Else
 	{
 		stopLoop := 1
@@ -69,16 +75,48 @@ DoConfiguredTaskRemedy(giveChance=0)
 	
 }
 
+RemedyKeyMoulds()
+{
+	; move moulds to altar
+	DragMenuAItemXToMenuBItemY("inventoryheader", "keymouldtransblack", "altarheader", "inventoryspace", "*TransBlack", 0)
+	
+	; pull clay from bsb
+	foundClay := FindInMenu("inventoryheader", "clay")
+	If (!foundClay[1] OR MenuAHasLessThan10KgOfItemX("inventoryheader", "clay"))
+	{
+		WithdrawFromBSB("clay")
+	}
+	
+	; move inventory clay to craftingwindowright box and combine
+	MoveItemFromInventoryToCraftingWindow("clay", "*TransWhite", 1, "right")
+	
+	; sacrifice key moulds (position altar below crafting window create button)
+	MoveMouseToImageRandom("createcontinuebutton")
+	
+	foundSaccableMoulds := FindInMenu("altarheader", "keymouldtransblack", "*TransBlack")
+	If (foundSaccableMoulds[1])
+	{
+		Say("Sacking moulds")
+		Random, xRand, -50, 50
+		Random, yRand, 175, 200
+		MouseGetPos, mouseX, mouseY
+		MoveMouseHumanlike(mouseX + xRand, mouseY + yRand)
+		DoKey("B")
+		SleepRandom(300, 2000)
+		WaitUntilIdle()
+	}
+}
+
 RemedyBricker()
 {
 	; move bricks to bsb
 	DragMenuAItemXToMenuBItemY("inventoryheader", "stonebricktransblack", "bsbheader", "inventoryspace", "*TransBlack", 0)
 	
 	; pull stone from bsb
-	WithdrawFromBSB("stoneshardtransblack")
+	WithdrawFromBSB("stoneshardtransblack", "*TransBlack")
 	
-	; move inventory stone to craftingwindowright box
-	MoveItemFromInventoryToCraftingWindow("stoneshardtransblack", 1)
+	; move inventory stone to craftingwindowright box and combine
+	MoveItemFromInventoryToCraftingWindow("stoneshardtransblack", "*TransBlack", 1, "right")
 }
 
 RemedyArchery()

@@ -407,7 +407,7 @@ MenuAHasMoreThan100KgOfItemX(menuName="", targetName="")
 		
 		Loop
 		{
-			If (is100kg > 0 OR variant > 3)
+			If (is100kg = 1 OR variant > 3)
 			{
 				Break
 			}
@@ -425,6 +425,47 @@ MenuAHasMoreThan100KgOfItemX(menuName="", targetName="")
 		}
 		
 		If (is100kg)
+		{
+			return 1
+		}
+	}
+	return 0
+}
+
+MenuAHasLessThan10KgOfItemX(menuName="", targetName="")
+{
+	foundItem := FindInMenu(menuName, targetName)
+	
+	If (foundItem[1])
+	{
+		itemX := foundItem[2]
+		itemY := foundItem[3]
+		
+		lineY := itemY - 5
+		
+		isSub10kg := 0
+		variant := 1
+		
+		Loop
+		{
+			If (isSub10kg = 1 OR variant > 3)
+			{
+				Break
+			}
+			
+			imgName := "sub10kg" . variant
+			
+			foundSub10kg := FindInLine(imgName, lineY, itemX, "*TransWhite")
+			
+			If (foundSub10kg)
+			{
+				isSub10kg := 1
+			}
+
+			variant += 1
+		}
+		
+		If (isSub10kg)
 		{
 			return 1
 		}
