@@ -156,6 +156,10 @@ RepairActiveToolIfDamaged()
 				AdvanceToCaveWall()
 			}
 		}
+		Else If (task = "Bricker")
+		{
+			MoveMouseToImageRandom("createcontinuebutton")
+		}
 		Else
 		{
 			Random, randX, -8, 8
@@ -253,6 +257,10 @@ DrinkWater()
 				{
 					AdvanceToCaveWall()
 				}
+			}
+			Else If (task = "Bricker")
+			{
+				MoveMouseToImageRandom("createcontinuebutton")
 			}
 			Else
 			{
@@ -402,11 +410,11 @@ ClearEventTab()
 	}
 }
 
-WithdrawFromBSB(imageName)
+WithdrawFromBSB(imageName, transMode="*TransWhite")
 {
 	global stopLoop, stopReason
 
-	DragMenuAItemXToMenuBItemY("bsbheader", "stoneshardtransblack", "inventoryheader", "inventoryspace", "*TransBlack")
+	DragMenuAItemXToMenuBItemY("bsbheader", imageName, "inventoryheader", "inventoryspace", transMode)
 	WaitUntilRemovingItems()
 	
 	foundSend := FindInMenu("removingitemsheader", "bsbsendbutton")
@@ -422,15 +430,16 @@ WithdrawFromBSB(imageName)
 	}
 }
 
-MoveItemFromInventoryToCraftingWindow(item, combineItems=0)
+MoveItemFromInventoryToCraftingWindow(item, transMode="*TransWhite", combineItems=0, side="right")
 {
-	stoneFound := FindInMenu("inventoryheader", "stoneshardtransblack", "*TransBlack")
+	stoneFound := FindInMenu("inventoryheader", item, transMode)
 	
 	If (stoneFound[1])
 	{
-		MoveMouseToImageRandom("stoneshardtransblack", stoneFound[2], stoneFound[3], "*TransBlack")
+		MoveMouseToImageRandom(item, stoneFound[2], stoneFound[3], transMode)
 		
-		craftingBox := FindImageInImage("craftingwindowbox", "craftingwindowright")
+		sideName := "craftingwindow" . side
+		craftingBox := FindImageInImage("craftingwindowbox", sideName)
 		
 		If (craftingBox[1])
 		{
@@ -443,7 +452,7 @@ MoveItemFromInventoryToCraftingWindow(item, combineItems=0)
 				Random, yRand, 30, 100
 				MoveMouseHumanlike(mouseX + xRand, mouseY + yRand)
 			
-				combine := FindImageInImage("craftingwindowcombine", "craftingwindowright")
+				combine := FindImageInImage("craftingwindowcombine", sideName)
 				
 				If (combine[1])
 				{
@@ -451,6 +460,7 @@ MoveItemFromInventoryToCraftingWindow(item, combineItems=0)
 					DoSingleClick()
 				}
 			}
+			SleepRandom(100, 300)
 		}
 	}
 }
