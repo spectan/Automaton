@@ -6,6 +6,16 @@ DoConfiguredTask()
 
 DoBricker()
 {
+	DoCreation()
+}
+
+DoKeyMoulds()
+{
+	DoCreation()
+}
+
+DoCreation()
+{
 	If (!MouseIsOnImage("createcontinuebutton"))
 	{
 		MoveMouseToImageRandom("createcontinuebutton")

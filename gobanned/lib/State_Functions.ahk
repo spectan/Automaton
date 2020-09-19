@@ -140,6 +140,11 @@ CaveWallHovered()
 	return ScreenSearch("cavewall", 20)
 }
 
+IsAltarHovered()
+{
+	return ScreenSearch("altarhovered", 20)
+}
+
 NeedConcrete()
 {
 	return ScreenSearch("needconcrete")
