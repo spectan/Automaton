@@ -85,10 +85,10 @@ RemedyKeyMoulds()
 	If (!foundClay[1] OR MenuAHasLessThan10KgOfItemX("inventoryheader", "clay"))
 	{
 		WithdrawFromBSB("clay")
+		
+		; move inventory clay to craftingwindowright box and combine
+		MoveItemFromInventoryToCraftingWindow("clay", "*TransWhite", 1, "right")
 	}
-	
-	; move inventory clay to craftingwindowright box and combine
-	MoveItemFromInventoryToCraftingWindow("clay", "*TransWhite", 1, "right")
 	
 	; sacrifice key moulds (position altar below crafting window create button)
 	MoveMouseToImageRandom("createcontinuebutton")
