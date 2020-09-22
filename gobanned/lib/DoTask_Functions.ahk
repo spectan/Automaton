@@ -53,6 +53,39 @@ DoWoodcutting()
 		return
 	}
 	
+	If (TooFar())
+	{
+		; Walk forward some
+		If (woodcuttingWalk AND !TooFarSpam())
+		{
+			MouseToRandomBottomMiddle()
+		}
+		Else
+		{
+			Say("Move closer")
+		}
+	}
+	
+	SleepRandom(100,300)
+	
+	If (!IsHoveringWoodcuttable())
+	{
+		; Walk forward until tree
+		If (woodcuttingWalk)
+		{
+			If (!AdvanceToWoodcuttable(woodcuttingWalkTime))
+			{
+				return
+			}
+		}
+		Else
+		{
+			PlaySound("Ding")
+		}
+	}
+	
+	SleepRandom(100,300)
+
 	If (IsHoveringFelledTree())
 	{
 		DoKey("S", , maxQueue)
@@ -61,35 +94,9 @@ DoWoodcutting()
 	{
 		DoKey("W", , maxQueue)
 	}
-	Else
-	{
-		; Walk forward until tree
-		If (woodcuttingWalk)
-		{
-			AdvanceToWoodcuttable(woodcuttingWalkTime)
-		}
-		Else
-		{
-			PlaySound("Ding")
-		}
-	}
-	SleepRandom(300,500)
-	If (IsNotDoingAction() AND TooFar())
-	{
-		; Walk forward some
-		If (woodcuttingWalk AND !TooFarSpam())
-		{
-			MouseToRandomBottomMiddle()			
-			AdvanceToWoodcuttable(woodcuttingWalkTime)
-		}
-		Else
-		{
-			Say("Move closer")
-		}
-	}
 	
 	previousTaskAttemptWorked := 1
-	SleepRandom(300,500)
+	SleepRandom(100,300)
 }
 
 DoPracticeDoll()
