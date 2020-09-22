@@ -95,6 +95,14 @@ DoWoodcutting()
 		DoKey("W", , maxQueue)
 	}
 	
+	SleepRandom(100,300)
+	
+	If (IsNotDoingAction() AND IsHoveringWoodcuttable() AND TooFar())
+	{
+		; You're at the far end of a felled tree
+		AdvanceTile()
+	}
+	
 	previousTaskAttemptWorked := 1
 	SleepRandom(100,300)
 }
