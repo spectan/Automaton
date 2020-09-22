@@ -120,6 +120,11 @@ TooFar()
 	return ScreenSearch("toofar")
 }
 
+TooFarSpam()
+{
+	return ScreenSearch("toofarspam")
+}
+
 Thirsty()
 {
 	return !ScreenSearch("enoughwater")
@@ -216,6 +221,12 @@ IsHoveringFelledTree()
 	return ret
 }
 
+IsHoveringBush()
+{
+	ret := ScreenSearch("bush", 20)
+	return ret
+}
+
 IsHoveringTree()
 {
 	ret := ScreenSearch("tree", 20)
@@ -225,6 +236,18 @@ IsHoveringTree()
 IsHoveringTreeStump()
 {
 	ret := ScreenSearch("treestump", 20)
+	return ret
+}
+
+IsHoveringCuttableTree()
+{
+	ret :=  !IsHoveringTreeStump() AND IsHoveringTree() OR IsHoveringBush()
+	return ret
+}
+
+IsHoveringWoodcuttable()
+{
+	ret := IsHoveringCuttableTree() OR IsHoveringFelledTree()
 	return ret
 }
 

@@ -385,6 +385,24 @@ AdvanceToCaveFloorNotFlat()
 	}
 }
 
+AdvanceToWoodcuttable(walkTime=10)
+{
+	global stopLoop, stopReason
+	SleepRandom(300, 2000)
+	DoAttentionLapse()
+	Send {w down}
+	PlaySound("Key")
+	WaitUntilWoodcuttableHovered(walkTime)
+	Send {w up}
+	SleepRandom(100, 300)
+	
+	If (!IsHoveringWoodcuttable())
+	{
+		stopLoop := 1
+		stopReason := "Failed to advance to woodcuttable"
+	}
+}
+
 ClearEventTab()
 {
 	global stopLoop, stopReason

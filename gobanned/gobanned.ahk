@@ -24,7 +24,7 @@ SetBatchLines -1
 
 ;Configuration
 ;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds
-task := "DigClayToBSB"
+task := "Woodcutting"
 maxQueue := 2
 actionKey := "T"
 
@@ -33,10 +33,12 @@ attentiveMode := 1
 impArrowMode := 0
 impWorldObject := 0
 tunnelDirection := 0
+woodcuttingWalk := 1
 optionalRepairEnabled := 1
 drinkWaterEnabled := 1
 
 ;End options
+woodcuttingWalkTime := 20
 tunnelLimit := 0
 alarmOnlyMode := 0
 enableLogout := 0
@@ -175,6 +177,15 @@ If (task = "LevelCaveFloor")
 {
 	MouseToRandomMiddle()
 	If (!IsHoveringCaveFloor())
+	{
+		DoSingleClick()
+	}
+}
+
+If (task = "Woodcutting")
+{
+	MouseToRandomBottomMiddle()
+	If (!IsHoveringWoodcuttable())
 	{
 		DoSingleClick()
 	}
