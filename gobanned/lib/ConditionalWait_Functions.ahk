@@ -45,6 +45,18 @@ WaitUntilCaveFloorNotFlatHovered()
 	SleepRandom(100, 300)
 }
 
+WaitUntilWoodcuttableHovered(waitTime=10)
+{
+	loopStartTime := A_TickCount
+	woodcuttableHovered := IsHoveringWoodcuttable()
+	While (!woodcuttableHovered AND (A_TickCount - loopStartTime < waitTime*1000))
+	{
+		Random, rand, 10, 25
+		Sleep, rand
+		woodcuttableHovered := IsHoveringWoodcuttable()
+	}
+}
+
 WaitForRefreshing()
 {
 	global stopLoop, 

@@ -44,24 +44,48 @@ DoDigClayToBSB()
 
 DoWoodcutting()
 {
-	global previousTaskAttemptWorked, maxQueue
+	global previousTaskAttemptWorked, maxQueue, woodcuttingWalk, stopLoop, stopReason, woodcuttingWalkTime
+	
+	If (TooFarSpam())
+	{
+		stopLoop := 1
+		stopReason := "Woodcutting was continually too far to act"
+		return
+	}
 	
 	If (IsHoveringFelledTree())
 	{
 		DoKey("S", , maxQueue)
 	}
-	Else if (IsHoveringTree() AND !IsHoveringTreeStump())
+	Else if (IsHoveringCuttableTree())
 	{
 		DoKey("W", , maxQueue)
 	}
 	Else
 	{
-		PlaySound("Ding")
+		; Walk forward until tree
+		If (woodcuttingWalk)
+		{
+			AdvanceToWoodcuttable(woodcuttingWalkTime)
+		}
+		Else
+		{
+			PlaySound("Ding")
+		}
 	}
 	SleepRandom(300,500)
-	If (!IsDoingAction() AND TooFar())
+	If (IsNotDoingAction() AND TooFar())
 	{
-		Say("Move closer")
+		; Walk forward some
+		If (woodcuttingWalk AND !TooFarSpam())
+		{
+			MouseToRandomBottomMiddle()			
+			AdvanceToWoodcuttable(woodcuttingWalkTime)
+		}
+		Else
+		{
+			Say("Move closer")
+		}
 	}
 	
 	previousTaskAttemptWorked := 1

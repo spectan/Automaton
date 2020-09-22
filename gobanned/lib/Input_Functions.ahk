@@ -84,6 +84,16 @@ MouseToRandomMiddle(radius=20)
 	MoveMouseHumanlike(midX + randX, midY + randY)
 }
 
+MouseToRandomBottomMiddle(radius=20)
+{
+	; Mouse to random middle 3/4 down
+	Random, randX, -1*radius, radius
+	Random, randY, -1*radius, radius
+	midX := 1920/2
+	midY := 1080/4*3
+	MoveMouseHumanlike(midX + randX, midY + randY)
+}
+
 MoveMouseHumanlike(x, y, mouseTime=0)
 {
 	If (mouseTime = 0)
