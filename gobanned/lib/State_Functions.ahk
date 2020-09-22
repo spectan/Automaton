@@ -1,29 +1,35 @@
 IsWhiteNameInLocal()
 {
 	ret := 0
-
-	localCoords := GetImageCoords("localtab20top", , , , , "*TransBlack")
+	WinGetActiveTitle, title
 	
-	If (localCoords[1])
+	; Since this is only looking for a white pixel, it could false positive
+	; when switching windows unless you only check it in the Wurm Online window
+	If (InStr(title, "Wurm Online"))
 	{
-		localX1 := localCoords[2]
-		localY1 := localCoords[3] + 20
+		localCoords := GetImageCoords("localtab20top", , , , , "*TransBlack")
 		
-		size := GetImageSize("localtab20top")
-		
-		localX2 := localCoords[2] + size[1]
-		localY2 := localCoords[3] + size[2]
-		
-		If (ScreenSearch("whitepixel", 30, "*TransBlack", localX1, localY1, localX2, localY2))
+		If (localCoords[1])
 		{
-			screenshotFile := A_WorkingDir . "\screenshots\localtrigger.png"
-			Run, nircmd.exe savescreenshot %screenshotFile%
+			localX1 := localCoords[2]
+			localY1 := localCoords[3] + 20
 			
-			MoveMouseToImageRandom("total", localX1, localY1, "*TransBlack", 0, 0, 200)
-			DoRightClick(50, 100)
-			MoveMouseToImageRandom("copytab", , , , 0, 0, 100)
-			DoLeftClick(50, 100)
-			ret := 1
+			size := GetImageSize("localtab20top")
+			
+			localX2 := localCoords[2] + size[1]
+			localY2 := localCoords[3] + size[2]
+			
+			If (ScreenSearch("whitepixel", 30, "*TransBlack", localX1, localY1, localX2, localY2))
+			{
+				screenshotFile := A_WorkingDir . "\screenshots\localtrigger.png"
+				Run, nircmd.exe savescreenshot %screenshotFile%
+				
+				MoveMouseToImageRandom("total", localX1, localY1, "*TransBlack", 0, 0, 200)
+				DoRightClick(50, 100)
+				MoveMouseToImageRandom("copytab", , , , 0, 0, 100)
+				DoLeftClick(50, 100)
+				ret := 1
+			}
 		}
 	}
 	return ret

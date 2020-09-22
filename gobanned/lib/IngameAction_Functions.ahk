@@ -400,7 +400,10 @@ AdvanceToWoodcuttable(walkTime=10)
 	{
 		stopLoop := 1
 		stopReason := "Failed to advance to woodcuttable"
+		return 0
 	}
+	
+	return 1
 }
 
 ClearEventTab()
