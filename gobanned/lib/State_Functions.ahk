@@ -247,13 +247,13 @@ IsHoveringTreeStump()
 
 IsHoveringCuttableTree()
 {
-	ret :=  !IsHoveringTreeStump() AND IsHoveringTree() OR IsHoveringBush()
+	ret :=  !IsHoveringTreeStump() AND (IsHoveringTree() OR IsHoveringBush()) 
 	return ret
 }
 
 IsHoveringWoodcuttable()
 {
-	ret := IsHoveringCuttableTree() OR IsHoveringFelledTree()
+	ret := IsHoveringFelledTree() OR IsHoveringCuttableTree()
 	return ret
 }
 

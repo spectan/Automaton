@@ -392,11 +392,11 @@ AdvanceToWoodcuttable(walkTime=10)
 	DoAttentionLapse()
 	Send {w down}
 	PlaySound("Key")
-	WaitUntilWoodcuttableHovered(walkTime)
+	walkTimeReached := WaitUntilWoodcuttableHovered(walkTime)
 	Send {w up}
 	SleepRandom(100, 300)
 	
-	If (!IsHoveringWoodcuttable())
+	If (!IsHoveringWoodcuttable() AND walkTimeReached)
 	{
 		stopLoop := 1
 		stopReason := "Failed to advance to woodcuttable"
