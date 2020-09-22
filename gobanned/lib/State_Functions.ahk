@@ -19,7 +19,7 @@ IsWhiteNameInLocal()
 			screenshotFile := A_WorkingDir . "\screenshots\localtrigger.png"
 			Run, nircmd.exe savescreenshot %screenshotFile%
 			
-			MoveMouseToBoundsRandom(localX1+10, localY1+30, localX2-30, localY2-30, 0, 0, 200)
+			MoveMouseToImageRandom("total", localX1, localY1, "*TransBlack", 0, 0, 200)
 			DoRightClick(50, 100)
 			MoveMouseToImageRandom("copytab", , , , 0, 0, 100)
 			DoLeftClick(50, 100)
