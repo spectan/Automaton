@@ -48,13 +48,33 @@ WaitUntilCaveFloorNotFlatHovered()
 WaitUntilWoodcuttableHovered(waitTime=10)
 {
 	loopStartTime := A_TickCount
-	woodcuttableHovered := IsHoveringWoodcuttable()
+	waitTimeRecached := 0
+	
+	hoveringFelledTree := IsHoveringFelledTree()
+	hoveringBush := IsHoveringBush()
+	hoveringTree := IsHoveringTree()
+	hoveringStump := IsHoveringTreeStump()
+	
+	woodcuttableHovered := !hoveringStump AND (hoveringBush OR hoveringFelledTree OR hoveringTree)
 	While (!woodcuttableHovered AND (A_TickCount - loopStartTime < waitTime*1000))
 	{
 		Random, rand, 10, 25
 		Sleep, rand
-		woodcuttableHovered := IsHoveringWoodcuttable()
+		
+		hoveringFelledTree := IsHoveringFelledTree()
+		hoveringBush := IsHoveringBush()
+		hoveringTree := IsHoveringTree()
+		hoveringStump := IsHoveringTreeStump()
+	
+		woodcuttableHovered := !hoveringStump AND (hoveringBush OR hoveringFelledTree OR hoveringTree)
 	}
+	
+	If (!woodcuttableHovered)
+	{
+		waitTimeReached := 1
+	}
+
+	return waitTimeReached
 }
 
 WaitForRefreshing()
