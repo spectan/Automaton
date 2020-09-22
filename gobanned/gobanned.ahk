@@ -24,7 +24,7 @@ SetBatchLines -1
 
 ;Configuration
 ;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds
-task := "KeyMoulds"
+task := "DigClayToBSB"
 maxQueue := 2
 actionKey := "T"
 
@@ -40,7 +40,7 @@ drinkWaterEnabled := 1
 tunnelLimit := 0
 alarmOnlyMode := 0
 enableLogout := 0
-whiteNameAlarmEnabled := 1
+whiteNameAlarmEnabled := 0
 alarm := 1 ;keep on so you know when macro stops
 
 
