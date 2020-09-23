@@ -44,7 +44,7 @@ DoDigClayToBSB()
 
 DoWoodcutting()
 {
-	global previousTaskAttemptWorked, maxQueue, woodcuttingWalk, stopLoop, stopReason, woodcuttingWalkTime
+	global previousTaskAttemptWorked, maxQueue, woodcuttingWalk, stopLoop, stopReason, woodcuttingWalkTime, usingChopTool
 	
 	If (TooFarSpam())
 	{
@@ -88,7 +88,14 @@ DoWoodcutting()
 
 	If (IsHoveringFelledTree())
 	{
-		DoKey("S", , maxQueue)
+		If (usingChopTool)
+		{
+			DoKey("S", , maxQueue)
+		}
+		Else
+		{
+			AdvanceTile()
+		}
 	}
 	Else if (IsHoveringCuttableTree())
 	{

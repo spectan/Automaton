@@ -34,6 +34,7 @@ impArrowMode := 0
 impWorldObject := 0
 tunnelDirection := 0
 woodcuttingWalk := 0
+usingChopTool := 1
 optionalRepairEnabled := 1
 drinkWaterEnabled := 1
 
