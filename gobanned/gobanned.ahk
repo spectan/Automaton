@@ -23,8 +23,8 @@ SetBatchLines -1
 #Include ConditionalWait_Functions.ahk
 
 ;Configuration
-;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds
-task := "Woodcutting"
+;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar
+task := "Mortar"
 maxQueue := 2
 actionKey := "T"
 
@@ -110,18 +110,10 @@ MsgBox, 0, ,
 
 ;F2 Hotkey for testing functions
 F2::
-global whiteNameAlarmEnabled
-If (whiteNameAlarmEnabled AND IsWhiteNameInLocal())
-{
-	;MsgBox, white name
-	SevereAlarm("LOCAL", Clipboard)
+	global stopLoop, stopReason
+	RemedyMortar()
 	
-	;screenshotFile := A_WorkingDir . "\screenshots\localtrigger.png"
-	;Run, nircmd.exe savescreenshot %screenshotFile%
-	
-	;MsgBox, %Clipboard%
-}
-
+	MsgBox, %stopLoop% %stopReason%
 Return
 
 F5::

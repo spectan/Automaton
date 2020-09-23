@@ -431,7 +431,7 @@ ClearEventTab()
 	}
 }
 
-WithdrawFromBSB(imageName, transMode="*TransWhite")
+WithdrawFromBSB(imageName, transMode="*TransWhite", quantity=0)
 {
 	global stopLoop, stopReason
 
@@ -442,6 +442,11 @@ WithdrawFromBSB(imageName, transMode="*TransWhite")
 	
 	If (foundSend[1])
 	{
+		If (quantity)
+		{
+			TypeInput(quantity)
+		}
+	
 		ClickOnImage("bsbsendbutton", "left", foundSend[2], foundSend[3])
 	}
 	Else

@@ -261,10 +261,11 @@ MoveMouseToBoundsRandom(x1, y1, x2, y2, minSleep=300, maxSleep=600, mouseTime=0)
 ClickDragToBounds(x1, y1, x2, y2)
 {
 	Click, Down
-	SleepRandom(300, 600)
+	SleepRandom(200, 400)
 	MoveMouseToBoundsRandom(x1, y1, x2, y2)
+	SleepRandom(200, 400)
 	Click, Up
-	SleepRandom(300, 600)
+	SleepRandom(200, 400)
 }
 
 ClickOnImage(imagename="", leftOrRight="left", preFoundX=0, preFoundY=0, transMode="*TransWhite")
