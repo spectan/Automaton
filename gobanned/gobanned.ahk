@@ -33,7 +33,7 @@ attentiveMode := 1
 impArrowMode := 0
 impWorldObject := 0
 tunnelDirection := 0
-woodcuttingWalk := 1
+woodcuttingWalk := 0
 optionalRepairEnabled := 1
 drinkWaterEnabled := 1
 
@@ -126,7 +126,7 @@ Return
 F5::
 Macro1:
 Say("Start")
-global stopLoop, whiteNameAlarmEnabled, wasDoingAction, carpentryToolbeltMap, drinkWaterEnabled, stopReason, surfaceMineX, surfaceMineY, optionalRepairEnabled, progressingFromBreakSoon, queueFinished, lastHadStamina, alarmOnlyMode, wallBroke, maxQueue, tilesMined, advancedTile, minesPerformed, didTunnelRemedy, logout, startTime, fourHourLimited, previousTaskAttemptWorked, actionFinished, archeryToolbeltMap, remedyUsed, alarm, secondChance, actionInitiated, enableLogout, enableWiggle
+global stopLoop, whiteNameAlarmEnabled, woodcuttingWalk, wasDoingAction, carpentryToolbeltMap, drinkWaterEnabled, stopReason, surfaceMineX, surfaceMineY, optionalRepairEnabled, progressingFromBreakSoon, queueFinished, lastHadStamina, alarmOnlyMode, wallBroke, maxQueue, tilesMined, advancedTile, minesPerformed, didTunnelRemedy, logout, startTime, fourHourLimited, previousTaskAttemptWorked, actionFinished, archeryToolbeltMap, remedyUsed, alarm, secondChance, actionInitiated, enableLogout, enableWiggle
 global isFullStamina, isQueued, isDoingAction, isNotDoingAction ;debug variables
 
 startTime := A_TickCount
@@ -182,7 +182,7 @@ If (task = "LevelCaveFloor")
 	}
 }
 
-If (task = "Woodcutting")
+If (task = "Woodcutting" AND woodcuttingWalk)
 {
 	MouseToRandomBottomMiddle()
 	If (!IsHoveringWoodcuttable())

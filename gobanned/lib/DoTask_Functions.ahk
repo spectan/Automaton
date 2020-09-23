@@ -97,7 +97,7 @@ DoWoodcutting()
 	
 	SleepRandom(100,300)
 	
-	If (IsNotDoingAction() AND IsHoveringWoodcuttable() AND TooFar())
+	If (woodcuttingWalk AND IsNotDoingAction() AND IsHoveringWoodcuttable() AND TooFar())
 	{
 		; You're at the far end of a felled tree
 		AdvanceTile()
