@@ -391,9 +391,9 @@ FindImageInImage(imageB="", imageA="", leftX=0, topY=0)
 	return notFound
 }
 
-MenuAHasMoreThan100KgOfItemX(menuName="", targetName="")
+MenuAHasMoreThan100KgOfItemX(menuName="", targetName="", transMode="*TransWhite")
 {
-	foundItem := FindInMenu(menuName, targetName)
+	foundItem := FindInMenu(menuName, targetName, transMode)
 	
 	If (foundItem[1])
 	{
@@ -432,9 +432,9 @@ MenuAHasMoreThan100KgOfItemX(menuName="", targetName="")
 	return 0
 }
 
-MenuAHasLessThan10KgOfItemX(menuName="", targetName="")
+MenuAHasLessThan10KgOfItemX(menuName="", targetName="", transMode="*TransWhite")
 {
-	foundItem := FindInMenu(menuName, targetName)
+	foundItem := FindInMenu(menuName, targetName, transMode)
 	
 	If (foundItem[1])
 	{

@@ -6,6 +6,17 @@ GetPlayerName()
 	return playerName
 }
 
+TypeInput(inputVar)
+{
+	inputStr := "" . inputVar
+	
+	Loop, Parse, inputStr
+	{
+		key := A_LoopField
+		DoKey(key)
+	}
+}
+
 SevereAlarm(title="SEVERE ALARM", message="")
 {
 	global severeAlarmPlaying

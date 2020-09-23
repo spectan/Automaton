@@ -67,12 +67,50 @@ DoConfiguredTaskRemedy(giveChance=0)
 		secondChance := 0
 		RemedyKeyMoulds()
 	}
+	Else If (task = "Mortar")
+	{
+		previousTaskAttemptWorked := 1
+		secondChance := 0
+		RemedyMortar()
+	}
 	Else
 	{
 		stopLoop := 1
 		stopReason := "Previous action failed, no remedy configured"
 	}
 	
+}
+
+RemedyMortar()
+{
+	; deposit mortar
+	DragMenuAItemXToMenuBItemY("inventoryheader", "mortartransblack", "bsbheader", "inventoryspace", "*TransBlack", 0)
+
+	; pull clay from bsb if <10kg
+	foundClay := FindInMenu("inventoryheader", "clay")
+	If (!foundClay[1] OR MenuAHasLessThan10KgOfItemX("inventoryheader", "clay"))
+	{
+		WithdrawFromBSB("clay", , 30)
+		withdrewClay := 1
+	}
+	
+	; pull sand from bsb if <10kg
+	foundSand := FindInMenu("inventoryheader", "sandtransblack", "*TransBlack")
+	If (!foundSand[1] OR MenuAHasLessThan10KgOfItemX("inventoryheader", "sandtransblack", "*TransBlack"))
+	{
+		WithdrawFromBSB("sandtransblack", "*TransBlack", 3)
+		withdrewSand := 1
+	}
+	
+	; put in window and combine
+	If (withdrewClay)
+	{
+		MoveItemFromInventoryToCraftingWindow("clay", "*TransWhite", 1, "right")
+	}
+	If (withdrewSand)
+	{
+		MoveItemFromInventoryToCraftingWindow("sandtransblack", "*TransBlack", 1, "left")
+	}
 }
 
 RemedyKeyMoulds()

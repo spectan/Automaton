@@ -14,6 +14,11 @@ DoKeyMoulds()
 	DoCreation()
 }
 
+DoMortar()
+{
+	DoCreation()
+}
+
 DoCreation()
 {
 	If (!MouseIsOnImage("createcontinuebutton"))
