@@ -131,6 +131,11 @@ TooFarSpam()
 	return ScreenSearch("toofarspam")
 }
 
+IsActionBlocked()
+{
+	return ScreenSearch("clearthearea")
+}
+
 Thirsty()
 {
 	return !ScreenSearch("enoughwater")
