@@ -24,9 +24,9 @@ SetBatchLines -1
 
 ;Configuration
 ;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar
-task := "Mortar"
-maxQueue := 2
-actionKey := "T"
+task := "MultiKey"
+maxQueue := 3
+actionKey := "S"
 
 ;Settings
 attentiveMode := 1
@@ -239,6 +239,12 @@ Loop
 		If (whiteNameAlarmEnabled AND IsWhiteNameInLocal())
 		{
 			SevereAlarm("LOCAL", Clipboard)
+		}
+		
+		If (IsActionBlocked())
+		{
+			stopLoop := 1
+			stopReason := "Clear the area"
 		}
 	
 		If (task = "LevelCaveFloor" AND NoSpaceToMine())
