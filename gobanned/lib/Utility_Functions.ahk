@@ -52,6 +52,12 @@ Say(speech="")
 	}
 }
 
+TakeScreenshot(fileName="screenshot")
+{
+	screenshotFile := A_WorkingDir . "\screenshots\" . fileName . ".png"
+	Run, nircmd.exe savescreenshot %screenshotFile%
+}
+
 DoAttentionLapse()
 {
 	global attentiveMode

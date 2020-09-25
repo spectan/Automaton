@@ -65,6 +65,20 @@ DoLeftClick(minSleep=100, maxSleep=300)
 	SleepRandom(minSleep, maxSleep)
 }
 
+DoDoubleClick(minSleep=100, maxSleep=300)
+{
+	Click, down
+	PlaySound("Click1")
+	SleepRandom(25, 100)
+	Click, up
+	SleepRandom(50, 150)
+	Click, down
+	PlaySound("Click1")
+	SleepRandom(25, 100)
+	Click, up
+	SleepRandom(minSleep, maxSleep)
+}
+
 DoRightClick(minSleep=100, maxSleep=300)
 {
 	Random, duration, 25, 100

@@ -409,6 +409,11 @@ Loop
 		
 		Sleep, 1000 ;reduce polling rate to once per second = 1000
 		
+		If (stopLoop OR logout)
+		{
+			TakeScreenshot("endscreen")
+		}
+		
 		If (stopLoop = 1)
 		{
 			If (alarm = 1)

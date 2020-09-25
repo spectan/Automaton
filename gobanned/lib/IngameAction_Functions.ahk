@@ -455,7 +455,15 @@ FuelForgeWithLogFromBSB()
 	If (foundLogs[1])
 	{
 		MoveMouseToImageRandom("logstransblack", foundLogs[2], foundLogs[3], "*TransBlack")
-		DoClick(2)
+		SleepRandom(300, 500)
+		DoDoubleClick()
+		
+		If (!FindInLine("activepixel"))
+		{
+			stopLoop := 1
+			stopReason := "Failed to activate log for refueling"
+			return
+		}
 		
 		forgeCoords := GetMenuCoords2("forgeheader")
 		
@@ -468,6 +476,7 @@ FuelForgeWithLogFromBSB()
 			
 			DoRightClick()
 			WaitForRefreshing()
+			SleepRandom(300, 500)
 			MoveMouseToImageRandom("burn")
 			DoLeftClick()
 		}
