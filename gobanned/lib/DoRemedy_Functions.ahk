@@ -266,7 +266,13 @@ RemedyImp()
 		{
 			FuelForgeWithLogFromBSB()
 			
-			If (!ForgeHasGlowingIronLumps())
+			If (!ForgeHasIronLumps())
+			{
+				stopLoop := 1
+				stopReason := "Forge has no iron lumps"
+				return
+			}
+			Else If (!ForgeHasGlowingIronLumps())
 			{
 				WaitUntilForgeHasGlowingIronLumps()
 				

@@ -75,6 +75,24 @@ IsForgeBurningSteadily()
 	return ret
 }
 
+ForgeHasIronLumps()
+{
+	ret := 0
+	
+	If (ScreenSearch("forgeheader"))
+	{
+		forgeLumpsFound := FindInMenu("forgeheader", "ironlumptransblack", "*TransBlack")
+		
+		ret := forgeLumpsFound[1]
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Forge was not open when looking for iron lumps"
+	}
+	return ret
+}
+
 ForgeHasGlowingIronLumps()
 {
 	ret := 0
