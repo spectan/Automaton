@@ -112,7 +112,16 @@ MsgBox, 0, ,
 F2::
 	global stopLoop, stopReason, smithingToolbeltMap
 	
-	ReplaceIronLumpFromForge()
+	forgeCoords := GetImageCoords("forgeheader")
+		
+	If (forgeCoords[1])
+	{
+		MsgBox, found
+	}
+	Else
+	{
+		MsgBox, not found
+	}
 	
 	MsgBox, stopLoop=%stopLoop% stopReason=%stopReason%
 Return
