@@ -16,7 +16,7 @@ DoConfiguredTaskRemedy(giveChance=0)
 	
 	If (InStr(task, "Imp") AND !impWorldObject)
 	{
-		If (ImproveRequiresItem())
+		If (ImproveRequiresItem() AND !InStr(task, "Smithing"))
 		{
 			stopLoop := 1
 			stopReason := "Improve requires item"
@@ -241,20 +241,50 @@ RemedyTunnelIntoWater()
 
 RemedyImp()
 {
-	global impXBalance, task
+	global impXBalance, task, lastCheckedForge
 	
-	If (task = "SmithingImp" AND LumpCooled())
-	{
-		stopLoop := 1
-		stopReason := "Lump cooled"
-		return
-	}
-	
+		
 	itemLineTopY := GetItemLineTop()
 	
 	MouseGetPos, mouseX, mouseY
 	Random, yRand, 0, 15 - 3
 	Random, xRand, -16, 16
+	
+	If (task = "SmithingImp")
+	{
+		lumpCooled := LumpCooled()		
+		improveRequiresItem := ImproveRequiresItem()
+		tooPoorShape := MaterialIsTooPoorShape()
+		
+		inventoryGlowingLumpFound := FindInMenu("inventoryheader", "ironlumpglowinghottransblack", "*TransBlack")
+		
+		; On a failed action, check for fuel if lump cooled or if it's been a random # minutes 15-30
+		Random, randFuelInterval, 15, 30
+		readyForFuelCheck := (A_TickCount - lastCheckedForge) > randFuelInterval * 60 * 1000
+	
+		If ((lumpCooled OR readyForFuelCheck) AND !IsForgeBurningSteadily())
+		{
+			FuelForgeWithLogFromBSB()
+			
+			If (!ForgeHasGlowingIronLumps())
+			{
+				WaitUntilForgeHasGlowingIronLumps()
+				
+				; Additional 1-2m wait to let lump heat up some more
+				SleepRandom(1 * 60 * 1000, 2 * 60 * 1000)
+			}
+		}
+		
+		If ((lumpCooled OR improveRequiresItem) AND !inventoryGlowingLumpFound[1])
+		{
+			ReplaceIronLumpFromForge()
+		}
+	
+		If (!tooPoorShape)
+		{
+			itemLineTopY -= 18
+		}
+	}
 	
 	If (impXBalance < -16)
 	{

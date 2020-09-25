@@ -77,6 +77,23 @@ WaitUntilWoodcuttableHovered(waitTime=10)
 	return waitTimeReached
 }
 
+WaitUntilForgeHasGlowingIronLumps()
+{
+	global stopLoop, stopReason
+	loopStartTime := A_TickCount
+	
+	Say("Waiting for forge")
+	forgeHasGlowingIronLumps := ForgeHasGlowingIronLumps()
+	
+	While (!stopLoop AND !forgeHasGlowingIronLumps AND (A_TickCount - loopStartTime < 5 * 60 * 1000))
+	{
+		Random, rand, 25, 75
+		Sleep, rand
+		forgeHasGlowingIronLumps := ForgeHasGlowingIronLumps()
+	}
+	SleepRandom(100, 300)
+}
+
 WaitForRefreshing()
 {
 	global stopLoop, 
