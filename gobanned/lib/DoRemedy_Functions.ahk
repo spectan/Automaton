@@ -266,6 +266,8 @@ RemedyImp()
 		{
 			FuelForgeWithLogFromBSB()
 			
+			SleepRandom(600, 2000)
+			
 			If (!ForgeHasIronLumps())
 			{
 				stopLoop := 1
