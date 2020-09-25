@@ -148,6 +148,36 @@ FindInLine(imageName, itemLineTopY=0, mouseX=0, transMode="*TransWhite")
 	return ret
 }
 
+FindCoordsInLine(imageName, itemLineTopY=0, mouseX=0, transMode="*TransWhite")
+{
+	imageCoords := []
+	imageCoords[1] := 0
+	imageCoords[2] := 0
+	imageCoords[3] := 0
+
+	If (itemLineTopY = 0)
+	{
+		itemLineTopY := GetItemLineTop()
+	}
+	itemLineBottomY := itemLineTopY + 18
+	
+	CoordMode, Pixel, Window
+	If (mouseX = 0)
+	{
+		MouseGetPos, mouseX, mouseY
+	}
+	img := A_WorkingDir . "\images\" . imageName . ".png"
+	ImageSearch, FoundX, FoundY, mouseX, itemLineTopY, mouseX+400, itemLineBottomY, *5 %transMode% %img%
+	If ErrorLevel = 0
+	{
+		imageCoords[1] := 1
+		imageCoords[2] := FoundX
+		imageCoords[3] := FoundY
+	}
+
+	return imageCoords
+}
+
 ;Find by upper right x (can run into other windows)
 GetMenuCoords(menuHeaderImageName="")
 {
@@ -350,7 +380,7 @@ GetImageBounds(imageName="", leftX=0, topY=0)
 	return bound
 }
 
-FindImageInImage(imageB="", imageA="", leftX=0, topY=0)
+FindImageInImage(imageB="", imageA="", leftX=0, topY=0, failOnNotFound=1)
 {
 	global stopLoop, stopReason
 	
@@ -378,14 +408,20 @@ FindImageInImage(imageB="", imageA="", leftX=0, topY=0)
 		}
 		Else
 		{
-			stopLoop := 1
-			stopReason := "FindImageInImage could not find imageB " . imageB . " within imageA " . imageA
+			If (failOnNotFound)
+			{
+				stopLoop := 1
+				stopReason := "FindImageInImage could not find imageB " . imageB . " within imageA " . imageA
+			}
 		}
 	}
 	Else
 	{
-		stopLoop := 1
-		stopReason := "FindImageInImage could not find imageA " . imageA
+		If (failOnNotFound)
+		{
+			stopLoop := 1
+			stopReason := "FindImageInImage could not find imageA " . imageA
+		}
 	}
 	
 	return notFound

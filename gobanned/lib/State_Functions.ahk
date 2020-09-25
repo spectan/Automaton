@@ -35,6 +35,80 @@ IsWhiteNameInLocal()
 	return ret
 }
 
+IsForgeBurningSteadily()
+{
+	global stopLoop, stopReason, lastCheckedForge
+	
+	Say("Checking forge")
+	ret := 0
+
+	forgeCoords := GetMenuCoords2("forgeheader")
+	
+	If (forgeCoords[1])
+	{
+		forgeCenterX := (forgeCoords[2] + forgeCoords[4])/2
+		forgeBottomY := forgeCoords[5]
+		
+		MouseToRandomAreaAroundPoint(forgeCenterX, forgeBottomY + 50, 50, 20)
+		SleepRandom(300, 500)
+		lastCheckedForge := A_TickCount
+		DoKey("y")
+		SleepRandom(300, 500)
+		
+		If (ScreenSearch("aforge"))
+		{
+			ret := ScreenSearch("forgeburnssteadily")
+		}
+		Else
+		{
+			stopLoop := 1
+			stopReason := "IsForgeBurningSteadily could not find forge examine"
+			ret := 1
+		}
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "IsForgeBurningSteadily could not find forge coords"
+	}
+	
+	return ret
+}
+
+ForgeHasGlowingIronLumps()
+{
+	ret := 0
+	
+	If (ScreenSearch("forgeheader"))
+	{
+		forgeLumpsFound := FindInMenu("forgeheader", "ironlumptransblack", "*TransBlack")
+		forgeGlowingLumpsFound := FindInMenu("forgeheader", "ironlumpglowinghottransblack", "*TransBlack")
+		
+		ret := forgeLumpsFound[1] AND forgeGlowingLumpsFound[1]
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Forge was not open when looking for glowing iron lumps"
+	}
+	return ret
+}
+
+IsItemGlowingHot(itemName, leftX=0, topY=0, transMode="*TransWhite")
+{
+	itemImageSize := GetImageSize(itemName)
+	itemGlowing := GetImageCoords("glowinghot", leftX, topY, leftX + itemImageSize[1], topY + itemImageSize[2])
+	
+	If (itemGlowing[1])
+	{
+		return 1
+	}
+	Else
+	{
+		return 0
+	}
+}
+
 IsIdle()
 {
 	return (!IsQueued() AND IsNotDoingAction())
@@ -86,6 +160,11 @@ IsFullStamina()
 IsCraftingOpen()
 {
 	return ScreenSearch("craftingWindow")
+}
+
+MaterialIsTooPoorShape()
+{
+	return ScreenSearch("toopoorshape")
 }
 
 TooHungry()

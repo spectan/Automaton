@@ -24,9 +24,9 @@ SetBatchLines -1
 
 ;Configuration
 ;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar
-task := "MultiKey"
+task := "SmithingImp"
 maxQueue := 3
-actionKey := "S"
+actionKey := "T"
 
 ;Settings
 attentiveMode := 1
@@ -110,10 +110,11 @@ MsgBox, 0, ,
 
 ;F2 Hotkey for testing functions
 F2::
-	global stopLoop, stopReason
-	RemedyMortar()
+	global stopLoop, stopReason, smithingToolbeltMap
 	
-	MsgBox, %stopLoop% %stopReason%
+	ReplaceIronLumpFromForge()
+	
+	MsgBox, stopLoop=%stopLoop% stopReason=%stopReason%
 Return
 
 F5::
@@ -123,6 +124,7 @@ global stopLoop, whiteNameAlarmEnabled, woodcuttingWalk, wasDoingAction, carpent
 global isFullStamina, isQueued, isDoingAction, isNotDoingAction ;debug variables
 
 startTime := A_TickCount
+lastCheckedForge := 0
 lastMovement := A_TickCount - (9 * 60 * 1000) ;first move is at earliest 1m after start
 lastHadStamina := startTime
 

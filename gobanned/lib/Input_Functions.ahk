@@ -75,6 +75,13 @@ DoRightClick(minSleep=100, maxSleep=300)
 	SleepRandom(minSleep, maxSleep)
 }
 
+MouseToRandomAreaAroundPoint(midX, midY, xRadius=20, yRadius=20)
+{
+	Random, randX, -1*xRadius, xRadius
+	Random, randY, -1*yRadius, yRadius
+	MoveMouseHumanlike(midX + randX, midY + randY)
+}
+
 MouseToRandomMiddle(radius=20)
 {
 	Random, randX, -1*radius, radius

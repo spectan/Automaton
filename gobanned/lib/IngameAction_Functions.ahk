@@ -1,4 +1,4 @@
-ActivateToolbelt(page=0, slot=1)
+ActivateToolbelt(page, slot)
 {
 	DoKey(page, , , , "^")
 	SleepRandom(100,200)
@@ -337,6 +337,199 @@ EatSourceSalt()
 			MoveMouseToImageRandom("sourcesalticon")
 		}
 	}
+}
+
+PutColdLumpsInForge()
+{
+	global stopLoop, stopReason
+	
+	done := 0
+	lineTopY := 0
+	lumpOffset := 0
+	lineHeight := 18
+
+	ironLumpImageSize := GetImageSize("ironlumptransblack")
+	inventorySpaceSize := GetImageSize("inventoryspace")
+	
+	foundFirstLump := FindInMenu("inventoryheader", "ironlumptransblack", "*TransBlack")
+	
+	If (foundFirstLump[1])
+	{
+		groupBoxFound := FindCoordsInLine("groupboxtransblack", foundFirstLump[3], foundFirstLump[2]-20, "*TransBlack")
+		
+		If (groupBoxFound[1])
+		{
+			ironLumpBelow := GetImageCoords("ironlumpicontransblack", foundFirstLump[2], foundFirstLump[3] + ironLumpImageSize[2], , , "*TransBlack")
+			
+			If (!ironLumpBelow[1])
+			{
+				; Group is collapsed, expand first
+				
+				MoveMouseToImageRandom("groupboxtransblack", groupBoxFound[2], groupBoxFound[3], "*TransBlack")
+				DoLeftClick()
+				
+				MouseGetPos, mouseX, mouseY
+				MouseToRandomAreaAroundPoint(mouseX - 100, mouseY - 100)
+			}
+			
+			; Move search coords down to first non-group lump
+			lineTopY := foundFirstLump[3] - 1 + lineHeight
+		}
+		Else
+		{
+			lineTopY := foundFirstLump[3] - 1
+		}
+		
+		While(!done)
+		{
+			currentLumpFound := GetImageCoords("ironlumptransblack", foundFirstLump[2], lineTopY + lumpOffset * lineHeight, , , "*TransBlack")
+			
+			If (currentLumpFound[1])
+			{
+				If (IsItemGlowingHot("ironlumptransblack", currentLumpFound[2], currentLumpFound[3], "*TransBlack"))
+				{
+					lumpOffset += 1
+				}
+				Else
+				{
+					; Put in forge
+					forgeSpace := FindInMenu("forgeheader", "inventoryspace")
+					
+					If (forgeSpace[1])
+					{
+						forgeSpaceX1 := forgeSpace[2]
+						forgeSpaceY1 := forgeSpace[3]
+						forgeSpaceX2 := forgeSpace[2] + inventorySpaceSize[1]
+						forgeSpaceY2 := forgeSpace[3] + inventorySpaceSize[2]
+						
+						MoveMouseToBoundsRandom(currentLumpFound[2], currentLumpFound[3], currentLumpFound[2] + ironLumpImageSize[1], currentLumpFound[3] + ironLumpImageSize[2])
+						ClickDragToBounds(forgeSpaceX1, forgeSpaceY1, forgeSpaceX2, forgeSpaceY2)
+						SleepRandom(300, 500)
+					}
+					Else
+					{
+						stopLoop := 1
+						stopReason := "Not enough empty space in forge to put cold lumps"
+						done := 1
+						return 0
+					}
+				}
+			}
+			Else
+			{
+				; no more lumps found
+				done := 1
+			}
+		}
+	}
+	
+	return 1
+}
+
+ReplaceIronLumpFromForge()
+{
+	global stopLoop, stopReason, smithingToolbeltMap
+	DragMenuAItemXToMenuBItemY("forgeheader", "ironlumpglowinghottransblack", "inventoryheader", "inventoryspace", "*TransBlack", 1)
+	PutColdLumpsInForge()
+	
+	hasGlowingIronLump := FindInMenu("inventoryheader", "ironlumpglowinghottransblack", "*TransBlack")
+	
+	If (hasGlowingIronLump[1])
+	{
+		AssignInventoryItemToToolbeltPageAndSlot("ironlumpglowinghottransblack", smithingToolbeltMap["ironlump"][1], smithingToolbeltMap["ironlump"][2], "*TransBlack")
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Failed to replace glowing hot iron lump in inventory"
+	}
+}
+
+FuelForgeWithLogFromBSB()
+{
+	global stopLoop, stopReason
+
+	WithdrawFromBSB("logstransblack", "*TransBlack", 1)
+	
+	foundLogs := FindInMenu("inventoryheader", "logstransblack", "*TransBlack")
+	If (foundLogs[1])
+	{
+		MoveMouseToImageRandom("logstransblack", foundLogs[2], foundLogs[3], "*TransBlack")
+		DoClick(2)
+		
+		forgeCoords := GetMenuCoords2("forgeheader")
+		
+		If (forgeCoords[1])
+		{
+			forgeCenterX := (forgeCoords[2] + forgeCoords[4])/2
+			forgeBottomY := forgeCoords[5]
+			
+			MouseToRandomAreaAroundPoint(forgeCenterX, forgeBottomY + 50, 50, 20)
+			
+			DoRightClick()
+			WaitForRefreshing()
+			MoveMouseToImageRandom("burn")
+			DoLeftClick()
+		}
+		Else
+		{
+			stopLoop := 1
+			stopReason := "FuelForgeWithLogFromBSB failed to find forge coords"
+		}
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "FuelForgeWithLogFromBSB failed to withdraw logs"
+	}
+}
+
+AssignInventoryItemToToolbeltPageAndSlot(itemName, page, slot, transMode="*TransWhite")
+{
+	global stopLoop, stopReason
+
+	foundItem := FindInMenu("inventoryheader", itemName, transMode)
+	
+	If (foundItem[1])
+	{
+		DoKey(page, , , , "^")
+		SleepRandom(100,200)
+		
+		slotWidth := 35
+		slotOffset := (slotWidth + 2) * (slot-1)
+		
+		toolbeltCoords := GetImageCoords("toolbeltstart")
+		
+		If (toolbeltCoords[1])
+		{
+			toolbeltStartSize := GetImageSize("toolbeltstart")
+		
+			toolbeltSlotX1 := toolbeltCoords[2] + toolbeltStartSize[1] + slotOffset
+			toolbeltSlotY1 := toolbeltCoords[3]
+			toolbeltSlotX2 := toolbeltSlotX1 + slotWidth
+			toolbeltSlotY2 := toolbeltSlotY1 + toolbeltStartSize[2]
+			
+			MoveMouseToImageRandom(itemName, foundItem[2], foundItem[3], transMode)
+			ClickDragToBounds(toolbeltSlotX1 + 2, toolbeltSlotY1 + 2, toolbeltSlotX2 - 2, toolbeltSlotY2 - 2)
+			
+			MoveMouseToImageRandom("toolbeltstart")
+			DoRightClick()
+			WaitForRefreshing()
+			MoveMouseToImageRandom("savetoolbelt")
+			DoLeftClick()
+		}
+		Else
+		{
+			stopLoop := 1
+			stopReason := "AssignInventoryItemToToolbeltPageAndSlot failed: toolbelt not found"
+		}
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "AssignInventoryItemToToolbeltPageAndSlot failed: " . itemName . " not found"
+	}
+	SleepRandom(100,200)
 }
 
 AdvanceTile()
