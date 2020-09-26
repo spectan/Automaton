@@ -398,13 +398,13 @@ IsRepaired()
 
 IsFourHourShutoff()
 {
-	global startTime, stopLoop, fourHourLimited, logout
+	global startTime, stopLoop, stopReason, fourHourLimited, logout, enableFourHourLimit
 	elapsed := A_TickCount - startTime
-	If (elapsed >= 4 * 60 * 60 * 1000)
+	If (enableFourHourLimit AND elapsed >= 4 * 60 * 60 * 1000)
 	{
 		stopLoop := 1
+		stopReason := "Four hour limit reached"
 		fourHourLimited := 1
-		logout := 1
 		ret := 1
 	}
 	Else
