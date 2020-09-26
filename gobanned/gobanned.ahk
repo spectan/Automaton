@@ -43,6 +43,7 @@ woodcuttingWalkTime := 20
 tunnelLimit := 0
 alarmOnlyMode := 0
 enableLogout := 0
+enableFourHourLimit := 1
 whiteNameAlarmEnabled := 0
 alarm := 1 ;keep on so you know when macro stops
 
@@ -373,7 +374,7 @@ Loop
 				stopLoop := 1
 				If (stopReason = "")
 				{
-					stopReason := "Remedy final else reached (second chance fail?)"
+					stopReason := "Action failed to start and remedy didn't work (or reason unknown)"
 				}
 			}
 		}
