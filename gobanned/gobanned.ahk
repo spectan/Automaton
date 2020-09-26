@@ -43,7 +43,7 @@ woodcuttingWalkTime := 20
 tunnelLimit := 0
 alarmOnlyMode := 0
 enableLogout := 0
-enableFourHourLimit := 1
+enableFourHourLimit := 0
 whiteNameAlarmEnabled := 0
 alarm := 1 ;keep on so you know when macro stops
 
@@ -113,8 +113,7 @@ MsgBox, 0, ,
 F2::
 	global stopLoop, stopReason, smithingToolbeltMap
 	
-	fullS := IsFullStamina()
-	MsgBox, %fullS%
+	ReplaceIronLumpFromForge()
 Return
 
 F5::

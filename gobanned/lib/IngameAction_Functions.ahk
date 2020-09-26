@@ -355,6 +355,8 @@ PutColdLumpsInForge()
 	
 	If (foundFirstLump[1])
 	{
+		MouseToRandomAreaAroundPoint(foundFirstLump[2] - 100, foundFirstLump[3] - 100)
+	
 		groupBoxFound := FindCoordsInLine("groupboxtransblack", foundFirstLump[3], foundFirstLump[2]-20, "*TransBlack")
 		
 		If (groupBoxFound[1])
