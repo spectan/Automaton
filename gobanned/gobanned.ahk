@@ -112,18 +112,8 @@ MsgBox, 0, ,
 F2::
 	global stopLoop, stopReason, smithingToolbeltMap
 	
-	forgeCoords := GetImageCoords("forgeheader")
-		
-	If (forgeCoords[1])
-	{
-		MsgBox, found
-	}
-	Else
-	{
-		MsgBox, not found
-	}
-	
-	MsgBox, stopLoop=%stopLoop% stopReason=%stopReason%
+	fullS := IsFullStamina()
+	MsgBox, %fullS%
 Return
 
 F5::
@@ -339,7 +329,7 @@ Loop
 		{
 			DrinkWater()
 		}
-		
+
 		;do action attempt
 		If (queueFinished AND !IsFourHourShutoff() AND !(logout = 1) AND !stopLoop AND (task != "ActionBell"))
 		{
