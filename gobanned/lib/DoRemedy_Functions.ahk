@@ -287,7 +287,7 @@ RemedyImp()
 		{
 			ReplaceIronLumpFromForge()
 		}
-		Else If (improveRequiresItem AND inventoryGlowingLumpFound[1])
+		Else If (improveRequiresItem AND inventoryGlowingLumpFound[1] OR NeedWater())
 		{
 			; Water ran out
 			stopLoop := 1

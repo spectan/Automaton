@@ -369,6 +369,11 @@ LumpCooled()
 	return ScreenSearch("lumpcooled")
 }
 
+NeedWater()
+{
+	return ScreenSearch("needwater")
+}
+
 HasFasted()
 {
 	return ScreenSearch("fasted")
