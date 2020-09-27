@@ -55,7 +55,7 @@ IsForgeBurningSteadily()
 		DoKey("y")
 		SleepRandom(300, 500)
 		
-		If (ScreenSearch("aforge"))
+		If (ScreenSearch("aforge", , "*TransBlack"))
 		{
 			ret := ScreenSearch("forgeburnssteadily")
 		}

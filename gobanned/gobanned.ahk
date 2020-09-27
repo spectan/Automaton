@@ -112,7 +112,6 @@ MsgBox, 0, ,
 ;F2 Hotkey for testing functions
 F2::
 	global stopLoop, stopReason, smithingToolbeltMap
-	
 	ret := ScreenSearch("continuebutton")
 	MoveMouseToCraftingButton()
 	
