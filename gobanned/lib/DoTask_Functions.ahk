@@ -37,6 +37,12 @@ DoLevelDirtUp()
 	SleepRandom(5000, 10000)
 }
 
+DoLevelDirtDown()
+{
+	DoKey("C")
+	SleepRandom(5000, 10000)
+}
+
 DoCreation()
 {
 	MoveMouseToCraftingButton()
