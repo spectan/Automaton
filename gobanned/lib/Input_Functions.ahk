@@ -89,6 +89,20 @@ DoRightClick(minSleep=100, maxSleep=300)
 	SleepRandom(minSleep, maxSleep)
 }
 
+MoveMouseToCraftingButton()
+{
+	; Only one of these if checks will succeed
+	
+	If (ScreenSearch("createbutton") AND !MouseIsOnImage("createbutton"))
+	{
+		MoveMouseToImageRandom("createbutton")
+	}
+	If (ScreenSearch("continuebutton") AND !MouseIsOnImage("continuebutton"))
+	{
+		MoveMouseToImageRandom("continuebutton")
+	}
+}
+
 MouseToRandomAreaAroundPoint(midX, midY, xRadius=20, yRadius=20)
 {
 	Random, randX, -1*xRadius, xRadius

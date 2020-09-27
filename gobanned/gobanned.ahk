@@ -23,8 +23,8 @@ SetBatchLines -1
 #Include ConditionalWait_Functions.ahk
 
 ;Configuration
-;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar
-task := "SmithingImp"
+;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar, ContinueBrickWall
+task := "ContinueBrickWall"
 maxQueue := 3
 actionKey := "T"
 
@@ -113,7 +113,10 @@ MsgBox, 0, ,
 F2::
 	global stopLoop, stopReason, smithingToolbeltMap
 	
-	ReplaceIronLumpFromForge()
+	ret := ScreenSearch("continuebutton")
+	MoveMouseToCraftingButton()
+	
+	MsgBox, continuefound=%ret% %stopLoop% %stopReason%
 Return
 
 F5::

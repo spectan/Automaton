@@ -19,12 +19,21 @@ DoMortar()
 	DoCreation()
 }
 
+DoContinueBrickWall()
+{
+	hasBricks := FindInMenu("inventoryheader", "stonebricktransblack", "*TransBlack")
+	
+	If (!hasBricks[1])
+	{
+		WithdrawFromAnywhere("stonebricktransblack", "*TransBlack")
+	}
+	
+	DoCreation()
+}
+
 DoCreation()
 {
-	If (!MouseIsOnImage("createcontinuebutton"))
-	{
-		MoveMouseToImageRandom("createcontinuebutton")
-	}
+	MoveMouseToCraftingButton()
 	
 	DoSingleClick()
 }

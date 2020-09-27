@@ -129,7 +129,7 @@ RemedyKeyMoulds()
 	}
 	
 	; sacrifice key moulds (position altar below crafting window create button)
-	MoveMouseToImageRandom("createcontinuebutton")
+	MoveMouseToCraftingButton()
 	
 	foundSaccableMoulds := FindInMenu("altarheader", "keymouldtransblack", "*TransBlack")
 	If (foundSaccableMoulds[1])

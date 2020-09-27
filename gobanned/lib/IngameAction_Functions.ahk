@@ -158,7 +158,7 @@ RepairActiveToolIfDamaged()
 		}
 		Else If (task = "Bricker")
 		{
-			MoveMouseToImageRandom("createcontinuebutton")
+			MoveMouseToCraftingButton()
 		}
 		Else
 		{
@@ -260,7 +260,7 @@ DrinkWater()
 			}
 			Else If (task = "Bricker")
 			{
-				MoveMouseToImageRandom("createcontinuebutton")
+				MoveMouseToCraftingButton()
 			}
 			Else
 			{
@@ -658,6 +658,62 @@ WithdrawFromBSB(imageName, transMode="*TransWhite", quantity=0)
 		stopLoop := 1
 		stopReason := "Send not found when removing items from bsb"
 	}
+}
+
+WithdrawFromSmallCrate(imageName, transMode="*TransWhite", quantity=0)
+{
+	global stopLoop, stopReason
+
+	DragMenuAItemXToMenuBItemY("smallcrateheader", imageName, "inventoryheader", "inventoryspace", transMode)
+	WaitUntilRemovingItems()
+	
+	foundSend := FindInMenu("removingitemsheader", "bsbsendbutton")
+	
+	If (foundSend[1])
+	{
+		If (quantity)
+		{
+			TypeInput(quantity)
+		}
+	
+		ClickOnImage("bsbsendbutton", "left", foundSend[2], foundSend[3])
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Send not found when removing items from small crate"
+	}
+}
+
+WithdrawFromAnywhere(imageName, transMode="*TransWhite")
+{
+	global stopLoop, stopReason
+	
+	pileItemFound := FindInMenu("pileheader", imageName, transMode)
+	smallCrateItemFound := FindInMenu("smallcrateheader", imageName, transMode)
+	; TODO: large crate
+	;largeCrateItemFound := FindInMenu("largecrateheader", imageName, transMode)
+	bsbItemFound := FindInMenu("bsbheader", imageName, transMode)
+	
+	If (pileItemFound[1])
+	{
+		DragMenuAItemXToMenuBItemY("pileheader", imageName, "inventoryheader", "inventoryspace", transMode)
+	}
+	Else if (smallCrateItemFound[1])
+	{
+		WithdrawFromSmallCrate(imageName, transMode)
+	}
+	; TODO: large crate
+	Else if (bsbItemFound[1])
+	{
+		WithdrawFromBSB(imageName, transMode)
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "WithdrawFromAnywhere did not find any " . imageName
+	}
+	
 }
 
 MoveItemFromInventoryToCraftingWindow(item, transMode="*TransWhite", combineItems=0, side="right")
