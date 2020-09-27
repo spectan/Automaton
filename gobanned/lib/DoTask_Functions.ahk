@@ -39,8 +39,18 @@ DoLevelDirtUp()
 
 DoLevelDirtDown()
 {
-	DoKey("C")
-	SleepRandom(5000, 10000)
+	global stopLoop, stopReason
+
+	If (YouHitRock())
+	{
+		stopLoop := 1
+		stopReason := "You hit rock while levelling down"
+	}
+	Else
+	{
+		DoKey("C")
+		SleepRandom(5000, 10000)
+	}
 }
 
 DoCreation()

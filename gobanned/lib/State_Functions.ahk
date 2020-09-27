@@ -167,6 +167,12 @@ NoSpaceToMine()
 	return ret
 }
 
+YouHitRock()
+{
+	ret := ScreenSearch("youhitrock")
+	return ret
+}
+
 IsFullStamina()
 {
 	global isFullStamina
