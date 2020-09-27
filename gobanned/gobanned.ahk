@@ -24,7 +24,7 @@ SetBatchLines -1
 
 ;Configuration
 ;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar, ContinueBrickWall
-task := "ContinueBrickWall"
+task := "SmithingImp"
 maxQueue := 3
 actionKey := "T"
 
@@ -112,10 +112,9 @@ MsgBox, 0, ,
 ;F2 Hotkey for testing functions
 F2::
 	global stopLoop, stopReason, smithingToolbeltMap
-	ret := ScreenSearch("continuebutton")
-	MoveMouseToCraftingButton()
+	MoveMouseToImageRandom("inventoryspace")
 	
-	MsgBox, continuefound=%ret% %stopLoop% %stopReason%
+	;MsgBox, continuefound=%ret% %stopLoop% %stopReason%
 Return
 
 F5::

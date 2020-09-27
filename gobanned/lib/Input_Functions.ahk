@@ -257,13 +257,21 @@ MoveMouseToImageRandom(imageName="", preFoundX=0, preFoundY=0, transMode="*Trans
 		imageX := imageFound[2]
 		imageY := imageFound[3]
 		
+		additionalDown := 0
+		
+		; To avoid dragging into inventory group if random y is top edge
+		If (imageName = "inventoryspace")
+		{
+			additionalDown := 18
+		}
+		
 		imageSize := GetImageSize(imageName)
 		imageWidth := imageSize[1]
 		Random, imageXRand, 0, imageWidth - 4
 		imageHeight := imageSize[2]
-		Random, imageYRand, 0, imageHeight - 4
+		Random, imageYRand, 0, imageHeight - 4 - additionalDown
 		
-		MoveMouseHumanlike(imageX + 2 + imageXRand, imageY + 2 + imageYRand, mouseTime)
+		MoveMouseHumanlike(imageX + 2 + imageXRand, imageY + 2 + imageYRand + additionalDown, mouseTime)
 		SleepRandom(minSleep, maxSleep)
 		
 		return 1
