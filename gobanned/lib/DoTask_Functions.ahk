@@ -49,7 +49,16 @@ DoLevelDirtDown()
 	Else
 	{
 		DoKey("C")
-		SleepRandom(5000, 10000)
+		SleepRandom(300, 500)
+		If (AlreadyFlat())
+		{
+			stopLoop := 1
+			stopReason := "Already flat while levelling down"
+		}
+		Else
+		{
+			SleepRandom(5000, 10000)
+		}
 	}
 }
 

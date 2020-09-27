@@ -173,6 +173,12 @@ YouHitRock()
 	return ret
 }
 
+AlreadyFlat()
+{
+	ret := ScreenSearch("alreadyflat")
+	return ret
+}
+
 IsFullStamina()
 {
 	global isFullStamina
