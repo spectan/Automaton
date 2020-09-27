@@ -34,6 +34,7 @@ DoContinueBrickWall()
 DoLevelDirtUp()
 {
 	DoKey("C")
+	SleepRandom(5000, 10000)
 }
 
 DoCreation()
