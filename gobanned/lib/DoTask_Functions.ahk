@@ -31,6 +31,11 @@ DoContinueBrickWall()
 	DoCreation()
 }
 
+DoLevelDirtUp()
+{
+	DoKey("C")
+}
+
 DoCreation()
 {
 	MoveMouseToCraftingButton()

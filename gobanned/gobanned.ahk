@@ -23,8 +23,8 @@ SetBatchLines -1
 #Include ConditionalWait_Functions.ahk
 
 ;Configuration
-;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar, ContinueBrickWall
-task := "SmithingImp"
+;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar, ContinueBrickWall, LevelDirtUp
+task := "LevelDirtUp"
 maxQueue := 3
 actionKey := "T"
 
@@ -90,6 +90,10 @@ surfaceMineX := 0
 surfaceMineY := 0
 wasDoingAction := 0
 severeAlarmPlaying := 0
+currentWorkX := 0
+currentWorkY := 0
+originalWorkX := 0
+originalWorkY := 0
 
 
 ; need to refactor activatetoolbelt to take the tool name and toolbelt map so we can keep track of the currently active tool
@@ -120,7 +124,7 @@ Return
 F5::
 Macro1:
 Say("Start")
-global stopLoop, whiteNameAlarmEnabled, woodcuttingWalk, wasDoingAction, carpentryToolbeltMap, drinkWaterEnabled, stopReason, surfaceMineX, surfaceMineY, optionalRepairEnabled, progressingFromBreakSoon, queueFinished, lastHadStamina, alarmOnlyMode, wallBroke, maxQueue, tilesMined, advancedTile, minesPerformed, didTunnelRemedy, logout, startTime, fourHourLimited, previousTaskAttemptWorked, actionFinished, archeryToolbeltMap, remedyUsed, alarm, secondChance, actionInitiated, enableLogout, enableWiggle
+global stopLoop, currentWorkX, currentWorkY, originalWorkX, originalWorkY, whiteNameAlarmEnabled, woodcuttingWalk, wasDoingAction, carpentryToolbeltMap, drinkWaterEnabled, stopReason, surfaceMineX, surfaceMineY, optionalRepairEnabled, progressingFromBreakSoon, queueFinished, lastHadStamina, alarmOnlyMode, wallBroke, maxQueue, tilesMined, advancedTile, minesPerformed, didTunnelRemedy, logout, startTime, fourHourLimited, previousTaskAttemptWorked, actionFinished, archeryToolbeltMap, remedyUsed, alarm, secondChance, actionInitiated, enableLogout, enableWiggle
 global isFullStamina, isQueued, isDoingAction, isNotDoingAction ;debug variables
 
 startTime := A_TickCount
@@ -330,6 +334,28 @@ Loop
 		{
 			DrinkWater()
 		}
+		
+		If (task = "LevelDirtUp")
+		{
+			MouseGetPos, mX, mY
+		
+			hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
+			hasMoreThan100kgDirt := MenuAHasMoreThan100KgOfItemX("inventoryheader", "dirttransblack", "*TransBlack")
+			
+			If (!hasDirt[1] OR !hasMoreThan100kgDirt)
+			{
+				WithdrawFromAnywhere("pilesofdirttransblack", "*TransBlack")
+				
+				If (originalWorkX = 0 OR originalWorkY = 0)
+				{
+					MouseToRandomAreaAroundPoint(mX, mY)
+				}
+				Else
+				{
+					MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
+				}
+			}
+		}
 
 		;do action attempt
 		If (queueFinished AND !IsFourHourShutoff() AND !(logout = 1) AND !stopLoop AND (task != "ActionBell"))
@@ -356,6 +382,14 @@ Loop
 					RepairActiveToolIfDamaged()
 				}
 				DoConfiguredTask()
+				MouseGetPos, mX, mY
+				currentWorkX := mX
+				currentWorkX := mY
+				If (originalWorkX = 0 OR originalWorkY = 0)
+				{
+					originalWorkX := currentWorkX
+					originalWorkY := currentWorkY
+				}
 				SleepRandom(300, 2000)
 				actionFinished := 0
 				queueFinished := 0
@@ -407,7 +441,7 @@ Loop
 			;MsgBox, isFullStamina=%isFullStamina%, isQueued=%isQueued%, isDoingAction=%isDoingAction%, isNotDoingAction=%isNotDoingAction%
 		}
 		
-		Sleep, 1000 ;reduce polling rate to once per second = 1000
+		SleepRandom(500, 1500) ;randomized loop polling from 1s to average of 1s
 		
 		If (stopLoop OR logout)
 		{

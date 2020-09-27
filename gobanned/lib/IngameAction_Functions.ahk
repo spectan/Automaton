@@ -660,11 +660,11 @@ WithdrawFromBSB(imageName, transMode="*TransWhite", quantity=0)
 	}
 }
 
-WithdrawFromSmallCrate(imageName, transMode="*TransWhite", quantity=0)
+WithdrawFromBulkContainer(bulkContainerName, imageName, transMode="*TransWhite", quantity=0)
 {
 	global stopLoop, stopReason
 
-	DragMenuAItemXToMenuBItemY("smallcrateheader", imageName, "inventoryheader", "inventoryspace", transMode)
+	DragMenuAItemXToMenuBItemY(bulkContainerName, imageName, "inventoryheader", "inventoryspace", transMode)
 	WaitUntilRemovingItems()
 	
 	foundSend := FindInMenu("removingitemsheader", "bsbsendbutton")
@@ -681,7 +681,7 @@ WithdrawFromSmallCrate(imageName, transMode="*TransWhite", quantity=0)
 	Else
 	{
 		stopLoop := 1
-		stopReason := "Send not found when removing items from small crate"
+		stopReason := "Send not found when removing items from " . bulkContainerName
 	}
 }
 
@@ -690,6 +690,8 @@ WithdrawFromAnywhere(imageName, transMode="*TransWhite")
 	global stopLoop, stopReason
 	
 	pileItemFound := FindInMenu("pileheader", imageName, transMode)
+	; Only pulls from crates in the cart
+	largeCartItemFound := FindInMenu("largecartheader", imageName, transMode)
 	smallCrateItemFound := FindInMenu("smallcrateheader", imageName, transMode)
 	; TODO: large crate
 	;largeCrateItemFound := FindInMenu("largecrateheader", imageName, transMode)
@@ -699,14 +701,18 @@ WithdrawFromAnywhere(imageName, transMode="*TransWhite")
 	{
 		DragMenuAItemXToMenuBItemY("pileheader", imageName, "inventoryheader", "inventoryspace", transMode)
 	}
+	Else if (largeCartItemFound[1])
+	{
+		WithdrawFromBulkContainer("largecartheader", imageName, transMode)
+	}
 	Else if (smallCrateItemFound[1])
 	{
-		WithdrawFromSmallCrate(imageName, transMode)
+		WithdrawFromBulkContainer("smallcrateheader", imageName, transMode)
 	}
 	; TODO: large crate
 	Else if (bsbItemFound[1])
 	{
-		WithdrawFromBSB(imageName, transMode)
+		WithdrawFromBulkContainer("bsbheader", imageName, transMode)
 	}
 	Else
 	{
