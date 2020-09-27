@@ -400,7 +400,7 @@ PutColdLumpsInForge()
 					If (forgeSpace[1])
 					{
 						forgeSpaceX1 := forgeSpace[2]
-						forgeSpaceY1 := forgeSpace[3]
+						forgeSpaceY1 := forgeSpace[3] + 18 ;18 down to avoid dragging into a container
 						forgeSpaceX2 := forgeSpace[2] + inventorySpaceSize[1]
 						forgeSpaceY2 := forgeSpace[3] + inventorySpaceSize[2]
 						
