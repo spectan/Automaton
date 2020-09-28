@@ -50,7 +50,20 @@ DoLevelDirt()
 
 DoLevelDirtUp()
 {
-	global stopLoop, stopReason, originalWorkX, originalWorkY
+	global stopLoop, stopReason
+	
+	If (GroundIsFlatHere() OR BorderIsFlatHere())
+	{
+		stopLoop := 1
+		stopReason := "Ground is flat here (levelling up)"
+		return
+	}
+	Else if (TooSteep())
+	{
+		stopLoop := 1
+		stopReason := "Slope is too steep here (levelling up)"
+		return
+	}
 
 	hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
 	
@@ -64,24 +77,21 @@ DoLevelDirtUp()
 
 	If (hasDirtNow[1])
 	{
-		If (!MouseWithinRadiusOfPoint(20, originalWorkX, originalWorkY))
-		{
-			MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
-		}
-	
 		If (FlatHovered())
 		{
 			stopLoop := 1
 			stopReason := "Ground is flat here (levelling up)"
 		}
-		Else if (TooSteep())
-		{
-			stopLoop := 1
-			stopReason := "Slope is too steep here (levelling up)"
-		}
 		Else
 		{
-			DoKey("C")
+			ClickOnImage("levelselect")
+			
+			If (AlreadyFlat())
+			{
+				stopLoop := 1
+				stopReason := "Ground is flat here (levelling up)"
+				return
+			}
 			
 			; Need to sleep >5s to allow action bar to start filling for main loop
 			SleepRandom(6000, 8000)
@@ -90,66 +100,62 @@ DoLevelDirtUp()
 	Else
 	{
 		stopLoop := 1
-		stopReason := "Didn't have and couldn't find dirt to level up with"
+		stopReason := "Didn't have dirt and couldn't find dirt to level up with"
 	}
 }
 
 DoLevelDirtDown()
 {
-	global stopLoop, stopReason, originalWorkX, originalWorkY
+	global stopLoop, stopReason
 	
-	If (NotStrongEnoughForMoreDirt())
-	{
-		If (!TryDropDirtForLevel(1))
-		{
-			; can't carry more and unable to drop dirt
-			return
-		}
-	}
-	
-	If (!MouseWithinRadiusOfPoint(20, originalWorkX, originalWorkY))
-	{
-		MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
-	}
-
-	If (YouHitRock())
-	{
-		stopLoop := 1
-		stopReason := "You hit rock while levelling down"
-	}
-	Else if (FlatHovered())
+	If (GroundIsFlatHere() OR BorderIsFlatHere())
 	{
 		stopLoop := 1
 		stopReason := "Ground is flat here (levelling down)"
+		TryDropDirtForLevel(1)
+		return
 	}
 	Else if (TooSteep())
 	{
 		stopLoop := 1
 		stopReason := "Slope is too steep here (levelling down)"
+		TryDropDirtForLevel(1)
+		return
+	}
+	Else if (YouHitRock())
+	{
+		stopLoop := 1
+		stopReason := "You hit rock while levelling down"
+		TryDropDirtForLevel(1)
+		return
+	}
+	
+	If (NotStrongEnoughForMoreDirt())
+	{
+		If (!TryDropDirtForLevel(1))
+		{
+			; can't carry more and unable to drop dirt (stopLoop)
+			return
+		}
+	}
+
+	If (FlatHovered())
+	{
+		stopLoop := 1
+		stopReason := "Ground is flat here (levelling down)"
+		TryDropDirtForLevel(1)
+		return
 	}
 	Else
 	{
-		strayDirtCounter := 0
-		If (IsStrayDirtHovered())
-		{
-			; Pick up max of 6 stray dirt if it failed to pile
-			While (IsStrayDirtHovered())
-			{
-				DoKey("e")
-				strayDirtCounter += 1
-				If (strayDirtCounter = 6)
-				{
-					break
-				}
-			}
-		}
-	
-	
-		DoKey("C")
+		ClickOnImage("levelselect")
 		
-		If (strayDirtCounter > 0)
+		If (AlreadyFlat())
 		{
+			stopLoop := 1
+			stopReason := "Ground is flat here (levelling up)"
 			TryDropDirtForLevel(1)
+			return
 		}
 		
 		; Need to sleep >5s to allow action bar to start filling for main loop to work
@@ -160,12 +166,9 @@ DoLevelDirtDown()
 		{
 			stopLoop := 1
 			stopReason := "You hit rock while levelling down"
+			TryDropDirtForLevel(1)
+			return
 		}
-	}
-	
-	If (stopLoop)
-	{
-		TryDropDirtForLevel(1)
 	}
 }
 

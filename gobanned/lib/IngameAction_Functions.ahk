@@ -612,8 +612,6 @@ AdvanceToWoodcuttable(walkTime=10)
 
 TryTakeDirtForLevel()
 {
-	global stopLoop
-
 	; TODO: make it work for sand as well
 
 	hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
