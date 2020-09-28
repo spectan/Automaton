@@ -161,8 +161,7 @@ If (!IsCraftingOpen())
 	DoKey("u")
 }
 
-; Clear event to remove past "Already flat" and "You hit rock" messages
-If (task = "LevelDirtDown")
+If (InStr(task, "Level"))
 {
 	ClearEventTab()
 }
