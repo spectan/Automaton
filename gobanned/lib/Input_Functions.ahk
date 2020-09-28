@@ -195,9 +195,22 @@ RandomBezier( X0, Y0, Xf, Yf, O="" ) {
     Return N+1
 }
 
+StoreMouse()
+{
+	global storedMouseX, storedMouseY
+	
+	MouseGetPos, mX, mY
+	
+	storedMouseX := mX
+	storedMouseY := mY
+}
+
 ReturnMouse(mouseX=0, mouseY=0)
 {
-	global task
+	global task, storedMouseX, storedMouseY
+	
+	; TODO: it may be better to use stored mouse coords to prevent missed clicks
+	
 	If (mouseX = 0 OR mouseY = 0)
 	{
 		MouseToRandomMiddle()
@@ -222,6 +235,9 @@ ReturnMouse(mouseX=0, mouseY=0)
 		Random, randY, -8, 8
 		MoveMouseHumanlike(mouseX + randX, mouseY + randY)
 	}
+	
+	storedMouseX := 0
+	storedMouseY := 0
 }
 
 MouseToArcheryIcon()
