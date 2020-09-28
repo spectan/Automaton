@@ -35,7 +35,9 @@ DoLevelDirt()
 {
 	global task
 	
-	DoLevelDirtDown()
+	ClickOnImage("levelselect")
+	WaitUntilIdle()
+	WaitUntilFullStamina()
 	
 	If (NeedDirtToLevel())
 	{
@@ -45,6 +47,7 @@ DoLevelDirt()
 	Else
 	{
 		task := "LevelDirtDown"
+		DoLevelDirtDown()
 	}
 }
 

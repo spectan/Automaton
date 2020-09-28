@@ -126,6 +126,17 @@ WaitUntilIdle(maxPreWait=2000)
 	SleepRandom(100, 300)
 }
 
+WaitUntilFullStamina(maxPreWait=2000)
+{
+	SleepRandom(300, maxPreWait)
+	isFullStamina := IsFullStamina()
+	While (!isFullStamina)
+	{
+		isFullStamina := IsFullStamina()
+	}
+	SleepRandom(100, 300)
+}
+
 WaitUntilFasted()
 {
 	loopStartTime := A_TickCount
