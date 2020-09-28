@@ -675,7 +675,10 @@ TryDropDirtForLevel(forceDrop=0)
 
 		If (!pileOpen OR DoesntFit())
 		{
-			MoveMouseToImageRandom("dirttransblack", hasDirt[2], hasDirt[3], "*TransBlack")
+			If (!MouseIsOnImage("dirttransblack", "*TransBlack"))
+			{
+				MoveMouseToImageRandom("dirttransblack", hasDirt[2], hasDirt[3], "*TransBlack")
+			}
 			DoKey("q")
 		}
 	}

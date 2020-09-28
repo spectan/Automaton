@@ -525,13 +525,13 @@ GetImpItem(impItemCsv)
 	return ret
 }
 
-MouseIsOnImage(imageName="")
+MouseIsOnImage(imageName="", transMode="*TransWhite")
 {
 	ret := 0
 	MouseGetPos, mouseX, mouseY
 	imageSize := GetImageSize(imageName)
 
-	imageCoords := GetImageCoords(imageName, mouseX - imageSize[1], mouseY - imageSize[2])
+	imageCoords := GetImageCoords(imageName, mouseX - imageSize[1], mouseY - imageSize[2], , , transMode)
 	If (imageCoords[1])
 	{
 		If ((mouseX > imageCoords[2] AND mouseX < imageCoords[2] + imageSize[1]) AND (mouseY > imageCoords[3] AND mouseY < imageCoords[3] + imageSize[2]))
