@@ -36,6 +36,7 @@ DoLevelDirt()
 	global task
 	
 	ClickOnImage("levelselect")
+	SleepRandom(5000,6000)
 	WaitUntilIdle()
 	WaitUntilFullStamina()
 	
