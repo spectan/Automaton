@@ -344,12 +344,12 @@ Loop
 			DrinkWater()
 		}
 		
-		If (!stopLoop AND task = "LevelDirtUp")
+		If (!stopLoop AND IsDoingAction() AND task = "LevelDirtUp")
 		{
 			TryTakeDirtForLevel()
 		}
 		
-		If (!stopLoop AND task = "LevelDirtDown")
+		If (!stopLoop AND IsDoingAction() AND task = "LevelDirtDown")
 		{
 			TryDropDirtForLevel()
 		}

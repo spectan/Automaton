@@ -77,25 +77,17 @@ DoLevelDirtUp()
 
 	If (hasDirtNow[1])
 	{
-		If (FlatHovered())
+		ClickOnImage("levelselect")
+		
+		If (AlreadyFlat())
 		{
 			stopLoop := 1
 			stopReason := "Ground is flat here (levelling up)"
+			return
 		}
-		Else
-		{
-			ClickOnImage("levelselect")
-			
-			If (AlreadyFlat())
-			{
-				stopLoop := 1
-				stopReason := "Ground is flat here (levelling up)"
-				return
-			}
-			
-			; Need to sleep >5s to allow action bar to start filling for main loop
-			SleepRandom(6000, 8000)
-		}
+		
+		; Need to sleep >5s to allow action bar to start filling for main loop
+		SleepRandom(6000, 8000)
 	}
 	Else
 	{
@@ -139,36 +131,26 @@ DoLevelDirtDown()
 		}
 	}
 
-	If (FlatHovered())
+	ClickOnImage("levelselect")
+	
+	If (AlreadyFlat())
 	{
 		stopLoop := 1
-		stopReason := "Ground is flat here (levelling down)"
+		stopReason := "Ground is flat here (levelling up)"
 		TryDropDirtForLevel(1)
 		return
 	}
-	Else
+	
+	; Need to sleep >5s to allow action bar to start filling for main loop to work
+	SleepRandom(6000, 8000)
+	
+	; I hate that I need to recheck this since my main loop wont catch this if the action fails in 5s
+	If (YouHitRock())
 	{
-		ClickOnImage("levelselect")
-		
-		If (AlreadyFlat())
-		{
-			stopLoop := 1
-			stopReason := "Ground is flat here (levelling up)"
-			TryDropDirtForLevel(1)
-			return
-		}
-		
-		; Need to sleep >5s to allow action bar to start filling for main loop to work
-		SleepRandom(6000, 8000)
-		
-		; I hate that I need to recheck this since my main loop wont catch this if the action fails in 5s
-		If (YouHitRock())
-		{
-			stopLoop := 1
-			stopReason := "You hit rock while levelling down"
-			TryDropDirtForLevel(1)
-			return
-		}
+		stopLoop := 1
+		stopReason := "You hit rock while levelling down"
+		TryDropDirtForLevel(1)
+		return
 	}
 }
 
