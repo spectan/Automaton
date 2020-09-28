@@ -313,30 +313,21 @@ ClickDragToBounds(x1, y1, x2, y2)
 
 ClickOnImage(imagename="", leftOrRight="left", preFoundX=0, preFoundY=0, transMode="*TransWhite")
 {
-	SleepRandom(300,500)
-		
 	If (MoveMouseToImageRandom(imageName, preFoundX, preFoundY, transMode))
 	{
 		If (leftOrRight = "right")
 		{
 			DoRightClick()
-			SleepRandom(400,600)
 			WaitForRefreshing()
 			If (stopLoop)
 			{
-				return
+				return 0
 			}
 			return 1
 		}
 		Else
 		{
 			DoLeftClick()
-			SleepRandom(400,600)
-			WaitForRefreshing()
-			If (stopLoop)
-			{
-				return
-			}
 			return 1
 		}
 	}

@@ -46,6 +46,11 @@ DoLevelDirtDown()
 		stopLoop := 1
 		stopReason := "You hit rock while levelling down"
 	}
+	Else if (BorderIsFlatHere())
+	{
+		stopLoop := 1
+		stopReason := "Border is now flat after levelling down"
+	}
 	Else
 	{
 		DoKey("C")
@@ -59,6 +64,10 @@ DoLevelDirtDown()
 		{
 			SleepRandom(5000, 10000)
 		}
+	}
+	If (stopLoop)
+	{
+		TryDropDirtForLevel()
 	}
 }
 

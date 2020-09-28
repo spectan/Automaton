@@ -161,7 +161,11 @@ If (!IsCraftingOpen())
 	DoKey("u")
 }
 
-;ClearEventTab()
+; Clear event to remove past "Already flat" and "You hit rock" messages
+If (task = "LevelDirtDown")
+{
+	ClearEventTab()
+}
 
 If (task = "Tunnel")
 {
@@ -337,81 +341,12 @@ Loop
 		
 		If (task = "LevelDirtUp")
 		{
-			; TODO: make it work for sand as well
-		
-			MouseGetPos, mX, mY
-		
-			hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
-			hasMoreThan100kgDirt := MenuAHasMoreThan100KgOfItemX("inventoryheader", "dirttransblack", "*TransBlack")
-			takeDirt := 0
-			
-			If (hasMoreThan100kgDirt)
-			{
-				; 1/3 chance to take dirt above 100kg (antimacro)
-				Random, rand, 0, 2
-				If (rand = 0)
-				{
-					takeDirt := 1
-				}
-			}
-			If (!hasDirt[1] OR !hasMoreThan100kgDirt)
-			{
-				takeDirt := 1
-			}
-			
-			If (takeDirt)
-			{
-				WithdrawFromAnywhere("pilesofdirttransblack", "*TransBlack")
-				
-				If (originalWorkX = 0 OR originalWorkY = 0)
-				{
-					MouseToRandomAreaAroundPoint(mX, mY)
-				}
-				Else
-				{
-					MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
-				}
-			}
+			TryTakeDirtForLevel()
 		}
 		
 		If (task = "LevelDirtDown")
 		{
-			; TODO: make it work for sand as well
-		
-			MouseGetPos, mX, mY
-		
-			hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
-			hasMoreThan100kgDirt := MenuAHasMoreThan100KgOfItemX("inventoryheader", "dirttransblack", "*TransBlack")
-			dropDirt := 0
-			
-			If (hasDirt[1])
-			{
-				; 1/3 chance to drop dirt before 100kg (antimacro)
-				Random, rand, 0, 2
-				If (rand = 0)
-				{
-					dropDirt := 1
-				}
-			}
-			If (hasDirt[1] AND hasMoreThan100kgDirt)
-			{
-				dropDirt := 1
-			}
-			
-			If (dropDirt)
-			{
-				MoveMouseToImageRandom("dirttransblack", hasDirt[2], hasDirt[3], "*TransBlack")
-				DoKey("q")
-				
-				If (originalWorkX = 0 OR originalWorkY = 0)
-				{
-					MouseToRandomAreaAroundPoint(mX, mY)
-				}
-				Else
-				{
-					MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
-				}
-			}
+			TryDropDirtForLevel()
 		}
 
 		;do action attempt

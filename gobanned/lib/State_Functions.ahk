@@ -179,6 +179,12 @@ AlreadyFlat()
 	return ret
 }
 
+BorderIsFlatHere()
+{
+	ret := ScreenSearch("borderisflathere")
+	return ret
+}
+
 IsFullStamina()
 {
 	global isFullStamina
