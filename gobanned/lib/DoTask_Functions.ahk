@@ -69,6 +69,11 @@ DoLevelDirtUp()
 			stopLoop := 1
 			stopReason := "Ground is flat here (levelling up)"
 		}
+		Else if (TooSteep())
+		{
+			stopLoop := 1
+			stopReason := "Slope is too steep here (levelling up)"
+		}
 		Else
 		{
 			DoKey("C")
@@ -106,6 +111,11 @@ DoLevelDirtDown()
 	{
 		stopLoop := 1
 		stopReason := "Ground is flat here (levelling down)"
+	}
+	Else if (TooSteep())
+	{
+		stopLoop := 1
+		stopReason := "Slope is too steep here (levelling down)"
 	}
 	Else
 	{

@@ -323,6 +323,12 @@ TooLitteredWithItems()
 	return ret
 }
 
+TooSteep()
+{
+	ret := ScreenSearch("toosteep")
+	return ret
+}
+
 NeedDirtToLevel()
 {
 	ret := ScreenSearch("ifyoucarriedsome")
