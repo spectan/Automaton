@@ -612,7 +612,7 @@ AdvanceToWoodcuttable(walkTime=10)
 
 TryTakeDirtForLevel()
 {
-	global originalWorkX, originalWorkY
+	global originalWorkX, originalWorkY, stopLoop
 
 	; TODO: make it work for sand as well
 
@@ -640,13 +640,17 @@ TryTakeDirtForLevel()
 	{
 		WithdrawFromAnywhere("pilesofdirttransblack", "*TransBlack")
 		
-		If (originalWorkX = 0 OR originalWorkY = 0)
+		; don't bother moving mouse if WithdrawFromAnywhere failed to find dirt
+		If (!stopLoop)
 		{
-			MouseToRandomAreaAroundPoint(mX, mY)
-		}
-		Else
-		{
-			MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
+			If (originalWorkX = 0 OR originalWorkY = 0)
+			{
+				MouseToRandomAreaAroundPoint(mX, mY)
+			}
+			Else
+			{
+				MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
+			}
 		}
 	}
 }
@@ -673,12 +677,12 @@ TryDropDirtForLevel(forceDrop=0)
 			dropDirt := 1
 		}
 	}
-	If (hasDirt[1] AND hasMoreThan100kgDirt)
+	If (hasDirt[1] AND (hasMoreThan100kgDirt OR forceDrop))
 	{
 		dropDirt := 1
 	}
 	
-	If (dropDirt OR forceDrop)
+	If (dropDirt)
 	{
 		If (pileOpen)
 		{
@@ -837,7 +841,6 @@ WithdrawFromAnywhere(imageName, transMode="*TransWhite")
 		stopLoop := 1
 		stopReason := "WithdrawFromAnywhere did not find any " . imageName
 	}
-	
 }
 
 MoveItemFromInventoryToCraftingWindow(item, transMode="*TransWhite", combineItems=0, side="right")

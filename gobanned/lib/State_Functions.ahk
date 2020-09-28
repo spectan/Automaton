@@ -323,6 +323,12 @@ TooLitteredWithItems()
 	return ret
 }
 
+NeedDirtToLevel()
+{
+	ret := ScreenSearch("ifyoucarriedsome")
+	return ret
+}
+
 FlatHovered()
 {
 	ret := ScreenSearch("flathover", 20)

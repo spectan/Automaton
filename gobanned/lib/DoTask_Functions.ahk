@@ -31,6 +31,23 @@ DoContinueBrickWall()
 	DoCreation()
 }
 
+DoLevelDirt()
+{
+	global task
+	
+	DoLevelDirtDown()
+	
+	If (NeedDirtToLevel())
+	{
+		task := "LevelDirtUp"
+		DoLevelDirtUp()
+	}
+	Else
+	{
+		task := "LevelDirtDown"
+	}
+}
+
 DoLevelDirtUp()
 {
 	global stopLoop, stopReason
@@ -50,7 +67,7 @@ DoLevelDirtUp()
 		If (FlatHovered())
 		{
 			stopLoop := 1
-			stopReason := "Already flat while levelling up"
+			stopReason := "Ground is flat here (levelling up)"
 		}
 		Else
 		{
@@ -88,7 +105,7 @@ DoLevelDirtDown()
 	Else if (FlatHovered())
 	{
 		stopLoop := 1
-		stopReason := "Already flat while levelling down"
+		stopReason := "Ground is flat here (levelling down)"
 	}
 	Else
 	{

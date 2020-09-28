@@ -23,8 +23,8 @@ SetBatchLines -1
 #Include ConditionalWait_Functions.ahk
 
 ;Configuration
-;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar, ContinueBrickWall, LevelDirtUp, LevelDirtDown
-task := "LevelDirtDown"
+;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar, ContinueBrickWall, LevelDirtUp, LevelDirtDown, LevelDirt
+task := "LevelDirt"
 maxQueue := 3
 actionKey := "T"
 
@@ -339,12 +339,12 @@ Loop
 			DrinkWater()
 		}
 		
-		If (task = "LevelDirtUp")
+		If (!stopLoop AND task = "LevelDirtUp")
 		{
 			TryTakeDirtForLevel()
 		}
 		
-		If (task = "LevelDirtDown")
+		If (!stopLoop AND task = "LevelDirtDown")
 		{
 			TryDropDirtForLevel()
 		}
