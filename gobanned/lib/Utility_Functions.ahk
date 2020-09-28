@@ -17,6 +17,16 @@ TypeInput(inputVar)
 	}
 }
 
+MouseWithinRadiusOfPoint(radius, x, y)
+{
+	MouseGetPos, mX, mY
+	
+	xWithin := mX >= x-radius AND mX <= x+radius
+	yWithin := mY >= y-radius AND mY <= y+radius
+	
+	return xWithin AND yWithin
+}
+
 SevereAlarm(title="SEVERE ALARM", message="")
 {
 	global severeAlarmPlaying

@@ -50,7 +50,7 @@ DoLevelDirt()
 
 DoLevelDirtUp()
 {
-	global stopLoop, stopReason
+	global stopLoop, stopReason, originalWorkX, originalWorkY
 
 	hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
 	
@@ -64,6 +64,11 @@ DoLevelDirtUp()
 
 	If (hasDirtNow[1])
 	{
+		If (!MouseWithinRadiusOfPoint(20, originalWorkX, originalWorkY))
+		{
+			MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
+		}
+	
 		If (FlatHovered())
 		{
 			stopLoop := 1
@@ -91,7 +96,7 @@ DoLevelDirtUp()
 
 DoLevelDirtDown()
 {
-	global stopLoop, stopReason, previousTaskAttemptWorked
+	global stopLoop, stopReason, originalWorkX, originalWorkY
 	
 	If (NotStrongEnoughForMoreDirt())
 	{
@@ -100,6 +105,11 @@ DoLevelDirtDown()
 			; can't carry more and unable to drop dirt
 			return
 		}
+	}
+	
+	If (!MouseWithinRadiusOfPoint(20, originalWorkX, originalWorkY))
+	{
+		MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
 	}
 
 	If (YouHitRock())
@@ -119,7 +129,28 @@ DoLevelDirtDown()
 	}
 	Else
 	{
+		strayDirtCounter := 0
+		If (IsStrayDirtHovered())
+		{
+			; Pick up max of 6 stray dirt if it failed to pile
+			While (IsStrayDirtHovered())
+			{
+				DoKey("e")
+				strayDirtCounter += 1
+				If (strayDirtCounter = 6)
+				{
+					break
+				}
+			}
+		}
+	
+	
 		DoKey("C")
+		
+		If (strayDirtCounter > 0)
+		{
+			TryDropDirtForLevel(1)
+		}
 		
 		; Need to sleep >5s to allow action bar to start filling for main loop to work
 		SleepRandom(6000, 8000)

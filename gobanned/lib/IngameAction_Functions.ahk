@@ -612,11 +612,9 @@ AdvanceToWoodcuttable(walkTime=10)
 
 TryTakeDirtForLevel()
 {
-	global originalWorkX, originalWorkY, stopLoop
+	global stopLoop
 
 	; TODO: make it work for sand as well
-
-	MouseGetPos, mX, mY
 
 	hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
 	hasMoreThan100kgDirt := MenuAHasMoreThan100KgOfItemX("inventoryheader", "dirttransblack", "*TransBlack")
@@ -639,29 +637,14 @@ TryTakeDirtForLevel()
 	If (takeDirt)
 	{
 		WithdrawFromAnywhere("pilesofdirttransblack", "*TransBlack")
-		
-		; don't bother moving mouse if WithdrawFromAnywhere failed to find dirt
-		If (!stopLoop)
-		{
-			If (originalWorkX = 0 OR originalWorkY = 0)
-			{
-				MouseToRandomAreaAroundPoint(mX, mY)
-			}
-			Else
-			{
-				MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
-			}
-		}
 	}
 }
 
 TryDropDirtForLevel(forceDrop=0)
 {
-	global originalWorkX, originalWorkY, stopLoop, stopReason
+	global stopLoop, stopReason
 	
 	; TODO: make it work for sand as well
-
-	MouseGetPos, mX, mY
 
 	pileOpen := ScreenSearch("pileheader")
 	hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
@@ -695,16 +678,6 @@ TryDropDirtForLevel(forceDrop=0)
 			MoveMouseToImageRandom("dirttransblack", hasDirt[2], hasDirt[3], "*TransBlack")
 			DoKey("q")
 		}
-		
-		If (originalWorkX = 0 OR originalWorkY = 0)
-		{
-			MouseToRandomAreaAroundPoint(mX, mY)
-		}
-		Else
-		{
-			MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
-		}
-		
 	}
 	
 	If (TooLitteredWithItems())
@@ -712,21 +685,6 @@ TryDropDirtForLevel(forceDrop=0)
 		stopLoop := 1
 		stopReason := "Unable to drop dirt when levelling down"
 		return 0
-	}
-	
-	If (IsStrayDirtHovered() AND !forceDrop)
-	{
-		; Pick up max of 6 stray dirt if it failed to pile
-		counter := 0
-		While (IsStrayDirtHovered())
-		{
-			DoKey("e")
-			counter += 1
-			If (counter = 6)
-			{
-				break
-			}
-		}
 	}
 	
 	return 1

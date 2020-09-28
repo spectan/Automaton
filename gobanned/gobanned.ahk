@@ -232,6 +232,10 @@ If (task = "SurfaceMineFlat")
 	}
 }
 
+MouseGetPos, mX, mY
+originalWorkX := mX
+originalWorkY := mY
+
 If (task = "Archery")
 {
 	ActivateToolbelt(archeryToolbeltMap["bow"][1], archeryToolbeltMap["bow"][2])
@@ -373,14 +377,11 @@ Loop
 					RepairActiveToolIfDamaged()
 				}
 				DoConfiguredTask()
+				
 				MouseGetPos, mX, mY
 				currentWorkX := mX
 				currentWorkX := mY
-				If (originalWorkX = 0 OR originalWorkY = 0)
-				{
-					originalWorkX := currentWorkX
-					originalWorkY := currentWorkY
-				}
+
 				SleepRandom(300, 2000)
 				actionFinished := 0
 				queueFinished := 0
