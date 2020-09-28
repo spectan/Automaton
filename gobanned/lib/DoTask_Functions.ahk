@@ -33,41 +33,81 @@ DoContinueBrickWall()
 
 DoLevelDirtUp()
 {
-	DoKey("C")
-	SleepRandom(5000, 10000)
+	global stopLoop, stopReason
+
+	hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
+	
+	If (!hasDirt[1])
+	{
+		TryTakeDirtForLevel()
+		SleepRandom(300, 500)
+	}
+	
+	hasDirtNow := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
+
+	If (hasDirtNow[1])
+	{
+		If (FlatHovered())
+		{
+			stopLoop := 1
+			stopReason := "Already flat while levelling up"
+		}
+		Else
+		{
+			DoKey("C")
+			
+			; Need to sleep >5s to allow action bar to start filling for main loop
+			SleepRandom(6000, 8000)
+		}
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Didn't have and couldn't find dirt to level up with"
+	}
 }
 
 DoLevelDirtDown()
 {
-	global stopLoop, stopReason
+	global stopLoop, stopReason, previousTaskAttemptWorked
+	
+	If (NotStrongEnoughForMoreDirt())
+	{
+		If (!TryDropDirtForLevel(1))
+		{
+			; can't carry more and unable to drop dirt
+			return
+		}
+	}
 
 	If (YouHitRock())
 	{
 		stopLoop := 1
 		stopReason := "You hit rock while levelling down"
 	}
-	Else if (BorderIsFlatHere())
+	Else if (FlatHovered())
 	{
 		stopLoop := 1
-		stopReason := "Border is now flat after levelling down"
+		stopReason := "Already flat while levelling down"
 	}
 	Else
 	{
 		DoKey("C")
-		SleepRandom(300, 500)
-		If (AlreadyFlat())
+		
+		; Need to sleep >5s to allow action bar to start filling for main loop to work
+		SleepRandom(6000, 8000)
+		
+		; I hate that I need to recheck this since my main loop wont catch this if the action fails in 5s
+		If (YouHitRock())
 		{
 			stopLoop := 1
-			stopReason := "Already flat while levelling down"
-		}
-		Else
-		{
-			SleepRandom(5000, 10000)
+			stopReason := "You hit rock while levelling down"
 		}
 	}
+	
 	If (stopLoop)
 	{
-		TryDropDirtForLevel()
+		TryDropDirtForLevel(1)
 	}
 }
 

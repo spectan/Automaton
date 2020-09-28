@@ -651,14 +651,15 @@ TryTakeDirtForLevel()
 	}
 }
 
-TryDropDirtForLevel()
+TryDropDirtForLevel(forceDrop=0)
 {
-	global originalWorkX, originalWorkY
+	global originalWorkX, originalWorkY, stopLoop, stopReason
 	
 	; TODO: make it work for sand as well
 
 	MouseGetPos, mX, mY
 
+	pileOpen := ScreenSearch("pileheader")
 	hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
 	hasMoreThan100kgDirt := MenuAHasMoreThan100KgOfItemX("inventoryheader", "dirttransblack", "*TransBlack")
 	dropDirt := 0
@@ -677,10 +678,19 @@ TryDropDirtForLevel()
 		dropDirt := 1
 	}
 	
-	If (dropDirt)
+	If (dropDirt OR forceDrop)
 	{
-		MoveMouseToImageRandom("dirttransblack", hasDirt[2], hasDirt[3], "*TransBlack")
-		DoKey("q")
+		If (pileOpen)
+		{
+			DragMenuAItemXToMenuBItemY("inventoryheader", "dirttransblack", "pileheader", "inventoryspace", "*TransBlack")
+			SleepRandom(300, 500)
+		}
+
+		If (!pileOpen OR DoesntFit())
+		{
+			MoveMouseToImageRandom("dirttransblack", hasDirt[2], hasDirt[3], "*TransBlack")
+			DoKey("q")
+		}
 		
 		If (originalWorkX = 0 OR originalWorkY = 0)
 		{
@@ -690,7 +700,32 @@ TryDropDirtForLevel()
 		{
 			MouseToRandomAreaAroundPoint(originalWorkX, originalWorkY)
 		}
+		
 	}
+	
+	If (TooLitteredWithItems())
+	{
+		stopLoop := 1
+		stopReason := "Unable to drop dirt when levelling down"
+		return 0
+	}
+	
+	If (IsStrayDirtHovered() AND !forceDrop)
+	{
+		; Pick up max of 6 stray dirt if it failed to pile
+		counter := 0
+		While (IsStrayDirtHovered())
+		{
+			DoKey("e")
+			counter += 1
+			If (counter = 6)
+			{
+				break
+			}
+		}
+	}
+	
+	return 1
 }
 
 ClearEventTab()

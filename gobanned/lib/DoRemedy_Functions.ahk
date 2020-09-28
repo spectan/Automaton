@@ -76,7 +76,10 @@ DoConfiguredTaskRemedy(giveChance=0)
 	Else
 	{
 		stopLoop := 1
-		stopReason := "Previous action failed, no remedy configured"
+		If (stopReason = "")
+		{
+			stopReason := "Previous action failed, no remedy configured"
+		}
 	}
 	
 }

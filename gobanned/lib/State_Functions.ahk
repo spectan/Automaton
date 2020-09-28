@@ -311,6 +311,36 @@ IsHoveringCaveFloor()
 	return ret
 }
 
+NotStrongEnoughForMoreDirt()
+{
+	ret := ScreenSearch("notstrongenoughformoredirt")
+	return ret
+}
+
+TooLitteredWithItems()
+{
+	ret := ScreenSearch("toolitteredwithitems")
+	return ret
+}
+
+FlatHovered()
+{
+	ret := ScreenSearch("flathover", 20)
+	return ret
+}
+
+DoesntFit()
+{
+	ret := ScreenSearch("doesntfit")
+	return ret
+}
+
+IsStrayDirtHovered()
+{
+	ret := ScreenSearch("dirthover", 20) AND !ScreenSearch("pileofdirthover", 20)
+	return ret
+}
+
 IsHoveringCaveFloorFlat()
 {
 	ret := ScreenSearch("cavefloorflat", 20)

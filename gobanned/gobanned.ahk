@@ -116,9 +116,9 @@ MsgBox, 0, ,
 ;F2 Hotkey for testing functions
 F2::
 	global stopLoop, stopReason, smithingToolbeltMap
-	MoveMouseToImageRandom("inventoryspace")
+	ret := FlatHovered()
 	
-	;MsgBox, continuefound=%ret% %stopLoop% %stopReason%
+	MsgBox, dirtfound=%ret% %stopLoop% %stopReason%
 Return
 
 F5::
