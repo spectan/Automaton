@@ -453,6 +453,7 @@ FuelForgeWithLogFromBSB()
 
 	WithdrawFromBSB("logstransblack", "*TransBlack", 1)
 	
+	SleepRandom(300, 500)
 	foundLogs := FindInMenu("inventoryheader", "logstransblack", "*TransBlack")
 	If (foundLogs[1])
 	{
@@ -475,7 +476,7 @@ FuelForgeWithLogFromBSB()
 			forgeBottomY := forgeCoords[5]
 			
 			MouseToRandomAreaAroundPoint(forgeCenterX, forgeBottomY + 50, 50, 20)
-			
+			SleepRandom(300, 500)
 			DoRightClick()
 			WaitForRefreshing()
 			SleepRandom(300, 500)

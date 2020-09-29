@@ -345,7 +345,12 @@ FindInMenu(menuName="", targetName="", transMode="*TransWhite")
 	
 	If (menuCoords[1])
 	{
-		return GetImageCoords(targetName, menuCoords[2], menuCoords[3], menuCoords[4], menuCoords[5], transMode)
+		x1 := menuCoords[2]
+		y1 := menuCoords[3]
+		x2 := menuCoords[4]
+		y2 := menuCoords[5]
+		;MsgBox, %x1% %y1% %x2% %y2%
+		return GetImageCoords(targetName, x1, y1, x2, y2, transMode)
 	}
 	Else
 	{

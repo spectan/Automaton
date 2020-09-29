@@ -24,7 +24,7 @@ SetBatchLines -1
 
 ;Configuration
 ;Task options are: SingleClick, MultiClick, SingleKey, MultiKey, MasonryImp, SmithingImp, CarpentryImp, Tunnel, PracticeDoll, SurfaceMineFlat, Archery, LevelCaveFloor, ActionBell, ClothTailoringImp, Woodcutting, DigClayToBSB, Bricker, KeyMoulds, Mortar, ContinueBrickWall, LevelDirtUp, LevelDirtDown, LevelDirt
-task := "LevelDirt"
+task := "SmithingImp"
 maxQueue := 3
 actionKey := "T"
 
@@ -118,9 +118,12 @@ MsgBox, 0, ,
 ;F2 Hotkey for testing functions
 F2::
 	global stopLoop, stopReason, smithingToolbeltMap
-	ret := FlatHovered()
-	
-	MsgBox, dirtfound=%ret% %stopLoop% %stopReason%
+	;ReplaceIronLumpFromForge()
+	FuelForgeWithLogFromBSB()
+	;DragMenuAItemXToMenuBItemY("forgeheader", "ironlumpglowinghottransblack", "inventoryheader", "inventoryspace", "*TransBlack", 1)
+	;itemXFound := FindInMenu("forgeheader", "ironlumpglowinghottransblack", "*TransBlack")
+	;found := itemXFound[1]
+	MsgBox, %stopLoop% %stopReason%
 Return
 
 F5::

@@ -53,7 +53,7 @@ IsForgeBurningSteadily()
 		SleepRandom(300, 500)
 		lastCheckedForge := A_TickCount
 		DoKey("y")
-		SleepRandom(300, 500)
+		SleepRandom(1000, 2000)
 		
 		If (ScreenSearch("aforge", , "*TransBlack"))
 		{
