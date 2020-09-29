@@ -74,7 +74,7 @@ DoLevelDirtUp()
 	If (!hasDirt[1])
 	{
 		TryTakeDirtForLevel()
-		SleepRandom(300, 500)
+		SleepRandom(1000, 2000)
 	}
 	
 	hasDirtNow := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")

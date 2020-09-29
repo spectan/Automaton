@@ -43,7 +43,7 @@ woodcuttingWalkTime := 20
 tunnelLimit := 0
 alarmOnlyMode := 0
 enableLogout := 0
-enableFourHourLimit := 0
+enableFourHourLimit := 1
 whiteNameAlarmEnabled := 0
 alarm := 1 ;keep on so you know when macro stops
 
