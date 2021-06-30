@@ -191,6 +191,12 @@ GroundIsFlatHere()
 	return ret
 }
 
+YouCannotDigRock()
+{
+	ret := ScreenSearch("youcannotdigrock")
+	return ret
+}
+
 IsFullStamina()
 {
 	global isFullStamina

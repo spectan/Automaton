@@ -92,6 +92,13 @@ DoLevelDirtUp()
 		
 		; Need to sleep >5s to allow action bar to start filling for main loop
 		SleepRandom(6000, 8000)
+		
+		If (YouCannotDigRock())
+		{
+			stopLoop := 1
+			stopReason := "Tile was rock when levelling up"
+			return
+		}
 	}
 	Else
 	{
@@ -118,7 +125,7 @@ DoLevelDirtDown()
 		TryDropDirtForLevel(1)
 		return
 	}
-	Else if (YouHitRock())
+	Else if (YouHitRock() OR YouCannotDigRock())
 	{
 		stopLoop := 1
 		stopReason := "You hit rock while levelling down"
@@ -140,7 +147,7 @@ DoLevelDirtDown()
 	If (AlreadyFlat())
 	{
 		stopLoop := 1
-		stopReason := "Ground is flat here (levelling up)"
+		stopReason := "Ground is flat here (levelling down)"
 		TryDropDirtForLevel(1)
 		return
 	}
@@ -149,7 +156,7 @@ DoLevelDirtDown()
 	SleepRandom(6000, 8000)
 	
 	; I hate that I need to recheck this since my main loop wont catch this if the action fails in 5s
-	If (YouHitRock())
+	If (YouHitRock() OR YouCannotDigRock())
 	{
 		stopLoop := 1
 		stopReason := "You hit rock while levelling down"

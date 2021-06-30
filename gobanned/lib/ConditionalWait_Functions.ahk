@@ -94,6 +94,29 @@ WaitUntilForgeHasGlowingIronLumps()
 	SleepRandom(100, 300)
 }
 
+WaitUntilInventoryHasItem(itemName, transMode="*TransWhite")
+{
+	global stopLoop, stopReason
+	loopStartTime := A_TickCount
+	timeout := 5000
+	
+	itemFound := FindInMenu("inventoryheader", itemName, transMode)
+	
+	While (!itemFound[1] AND (A_TickCount - loopStartTime < timeout))
+	{
+		Random, rand, 25, 75
+		Sleep, rand
+		itemFound := FindInMenu("inventoryheader", itemName, transMode)
+	}
+	
+	If (A_TickCount - loopStartTime >= timeout)
+	{
+		stopLoop := 1
+		stopReason := "Inventory lacked item " . itemName . " after " . timeout . "ms"
+	}
+	SleepRandom(100, 300)
+}
+
 WaitForRefreshing()
 {
 	global stopLoop, 

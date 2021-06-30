@@ -734,6 +734,8 @@ WithdrawFromBSB(imageName, transMode="*TransWhite", quantity=0)
 		}
 	
 		ClickOnImage("bsbsendbutton", "left", foundSend[2], foundSend[3])
+		
+		WaitUntilInventoryHasItem(imageName, transMode)
 	}
 	Else
 	{
@@ -759,6 +761,8 @@ WithdrawFromBulkContainer(bulkContainerName, imageName, transMode="*TransWhite",
 		}
 	
 		ClickOnImage("bsbsendbutton", "left", foundSend[2], foundSend[3])
+		
+		WaitUntilInventoryHasItem(imageName, transMode)
 	}
 	Else
 	{
@@ -830,6 +834,7 @@ MoveItemFromInventoryToCraftingWindow(item, transMode="*TransWhite", combineItem
 				If (combine[1])
 				{
 					MoveMouseToBoundsRandom(combine[2], combine[3], combine[4], combine[5])
+					SleepRandom(200, 400)
 					DoSingleClick()
 				}
 			}

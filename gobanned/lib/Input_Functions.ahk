@@ -91,8 +91,13 @@ DoRightClick(minSleep=100, maxSleep=300)
 
 MoveMouseToCraftingButton()
 {
+	; If create/continue is covered by a hover tooltip due to moving mouse to [Send]
+	If (!ScreenSearch("createbutton") AND !ScreenSearch("continuebutton"))
+	{
+		MoveMouseToImageRandom("craftingWindow")
+	}
+
 	; Only one of these if checks will succeed
-	
 	If (ScreenSearch("createbutton") AND !MouseIsOnImage("createbutton"))
 	{
 		MoveMouseToImageRandom("createbutton")
