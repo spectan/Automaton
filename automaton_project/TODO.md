@@ -22,3 +22,6 @@
 1. Finish GUI
 2. Start imping framework skeleton
 
+## Priority list for Dissimulo
+1. Make miner work
+

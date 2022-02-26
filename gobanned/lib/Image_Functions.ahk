@@ -1,6 +1,18 @@
 ScreenSearch(imageName, variance=5, trans="", x1=0, y1=0, x2=1920, y2=1080)
 {
 	global FoundX, FoundY
+	
+	;Get the actual max bounds for the window
+	WinGetPos, x, y, w, h, Wurm Online
+	If (x2 = 1920)
+	{
+		x2 := w
+	}
+	If (y2 = 1080)
+	{
+		y2 := h
+	}
+	
 	img := A_WorkingDir . "\images\" . imageName . ".png"
 	CoordMode, Pixel, Window
 	ImageSearch, FoundX, FoundY, x1, y1, x2, y2, %trans% *%variance% %img%
@@ -46,6 +58,17 @@ GetImageCoords(imageName="", x1=0, y1=0, x2=1920, y2=1080, transMode="*TransWhit
 	ret[2] := 0
 	ret[3] := 0
 	
+	;Get the actual max bounds for the window
+	WinGetPos, x, y, w, h, Wurm Online
+	If (x2 = 1920)
+	{
+		x2 := w
+	}
+	If (y2 = 1080)
+	{
+		y2 := h
+	}
+	
 	img := A_WorkingDir . "\images\" . imageName . ".png"
 	CoordMode, Pixel, Window
 	ImageSearch, foundX, foundY, x1, y1, x2, y2, %transMode% *%variance% %img%
@@ -55,7 +78,6 @@ GetImageCoords(imageName="", x1=0, y1=0, x2=1920, y2=1080, transMode="*TransWhit
 		ret[2] := foundX
 		ret[3] := foundY
 	}
-
 	return ret
 }
 
@@ -100,15 +122,21 @@ IsImpItem(imageName)
 	return ret
 }
 
-FindInLine(imageName)
+FindInLine(imageName, itemLineTopY=0, mouseX=0, transMode="*TransWhite")
 {
-	itemLineTopY := GetItemLineTop()
+	If (itemLineTopY = 0)
+	{
+		itemLineTopY := GetItemLineTop()
+	}
 	itemLineBottomY := itemLineTopY + 18
 	
 	CoordMode, Pixel, Window
-	MouseGetPos, mouseX, mouseY
+	If (mouseX = 0)
+	{
+		MouseGetPos, mouseX, mouseY
+	}
 	img := A_WorkingDir . "\images\" . imageName . ".png"
-	ImageSearch, FoundX, FoundY, mouseX, itemLineTopY, mouseX+400, itemLineBottomY, *5 *TransWhite %img%
+	ImageSearch, FoundX, FoundY, mouseX, itemLineTopY, mouseX+400, itemLineBottomY, *5 %transMode% %img%
 	If ErrorLevel = 0
 	{
 		ret := 1
@@ -120,6 +148,37 @@ FindInLine(imageName)
 	return ret
 }
 
+FindCoordsInLine(imageName, itemLineTopY=0, mouseX=0, transMode="*TransWhite")
+{
+	imageCoords := []
+	imageCoords[1] := 0
+	imageCoords[2] := 0
+	imageCoords[3] := 0
+
+	If (itemLineTopY = 0)
+	{
+		itemLineTopY := GetItemLineTop()
+	}
+	itemLineBottomY := itemLineTopY + 18
+	
+	CoordMode, Pixel, Window
+	If (mouseX = 0)
+	{
+		MouseGetPos, mouseX, mouseY
+	}
+	img := A_WorkingDir . "\images\" . imageName . ".png"
+	ImageSearch, FoundX, FoundY, mouseX, itemLineTopY, mouseX+400, itemLineBottomY, *5 %transMode% %img%
+	If ErrorLevel = 0
+	{
+		imageCoords[1] := 1
+		imageCoords[2] := FoundX
+		imageCoords[3] := FoundY
+	}
+
+	return imageCoords
+}
+
+;Find by upper right x (can run into other windows)
 GetMenuCoords(menuHeaderImageName="")
 {
 	global stopLoop, stopReason
@@ -176,6 +235,67 @@ GetMenuCoords(menuHeaderImageName="")
 	return menuFound
 }
 
+;Find by bottom left corner (bounds a column for the bottom left corner)
+GetMenuCoords2(menuHeaderImageName="")
+{
+	global stopLoop, stopReason
+	
+	menuFound := []
+	menuFound[1] := 0
+	menuFound[2] := 0
+	menuFound[3] := 0
+	menuFound[4] := 0
+	menuFound[5] := 0
+	
+	menuHeader := GetImageCoords(menuHeaderImageName)
+	
+	If (menuHeader[1])
+	{
+		menuFound[2] := menuHeader[2]
+		menuFound[3] := menuHeader[3]
+
+		size := GetImageSize(menuHeaderImageName)
+		
+		menuBottomLeft := GetImageCoords("menubottomleft", menuFound[2]-20, menuFound[3], menuFound[2] + size[1])
+		
+		If (menuBottomLeft[1])
+		{
+			menuBottomLeftX := menuBottomLeft[2]
+			menuBottomLeftY := menuBottomLeft[3]
+			
+			size := GetImageSize("menuBottomLeft")
+			
+			menuCorner := GetImageCoords("menucorner", menuBottomLeftX, menuBottomLeftY)
+			
+			If (menuCorner[1])
+			{
+				menuFound[4] := menuCorner[2]
+				menuFound[5] := menuCorner[3]
+				
+				menuFound[1] := 1
+			}
+			Else
+			{
+				;stopLoop := 1
+				;stopReason := "Unable to find menu corner " . menuHeaderImageName
+			}
+		}
+		Else
+		{
+			;stopLoop := 1
+			;stopReason := "Unable to find menubottomleft for " . menuHeaderImageName
+		}
+	}
+	Else
+	{
+		;stopLoop := 1
+		;stopReason := "Unable to find menu " . menuHeaderImageName
+	}
+	
+	;MsgBox % "stopReason=" . stopReason . " found=" . menuFound[1] . " x1=" . menuFound[2] . " y1=" . menuFound[3] . " x2=" . menuFound[4] . " y2=" . menuFound[5]
+	return menuFound
+}
+
 GetItemLineTop(mouseX=0, mouseY=0)
 {
 	global stopLoop, stopReason, impWorldObject
@@ -221,11 +341,16 @@ FindInMenu(menuName="", targetName="", transMode="*TransWhite")
 	notFound := []
 	notFound[1] := 0
 
-	menuCoords := GetMenuCoords(menuName)
+	menuCoords := GetMenuCoords2(menuName)
 	
 	If (menuCoords[1])
 	{
-		return GetImageCoords(targetName, menuCoords[2], menuCoords[3], menuCoords[4], menuCoords[5], transMode)
+		x1 := menuCoords[2]
+		y1 := menuCoords[3]
+		x2 := menuCoords[4]
+		y2 := menuCoords[5]
+		;MsgBox, %x1% %y1% %x2% %y2%
+		return GetImageCoords(targetName, x1, y1, x2, y2, transMode)
 	}
 	Else
 	{
@@ -233,6 +358,160 @@ FindInMenu(menuName="", targetName="", transMode="*TransWhite")
 		;stopReason := "Unable to find menu " . menuHeaderImageName	
 		return notFound
 	}
+}
+
+GetImageBounds(imageName="", leftX=0, topY=0)
+{
+	bound := []
+	bound[1] := 0
+	bound[2] := 0
+	bound[3] := 0
+	bound[4] := 0
+	bound[5] := 0
+	
+	found := GetImageCoords(imageName, leftX, topY)
+	
+	If (found[1])
+	{
+		size := GetImageSize(imagename)
+		
+		bound[1] := 1
+		bound[2] := found[2]
+		bound[3] := found[3]
+		bound[4] := found[2] + size[1]
+		bound[5] := found[3] + size[2]
+	}
+	
+	return bound
+}
+
+FindImageInImage(imageB="", imageA="", leftX=0, topY=0, failOnNotFound=1)
+{
+	global stopLoop, stopReason
+	
+	notFound := []
+	notFound[1] := 0
+
+	imageABounds := GetImageBounds(imageA, leftX, topY)
+	
+	If (imageABounds[1])
+	{
+		imageBCoords := GetImageCoords(imageB, imageABounds[2], imageABounds[3], imageABounds[4], imageABounds[5])
+		
+		If (imageBCoords[1])
+		{
+			size := GetImageSize(imageB)
+		
+			imageBBounds := []
+			imageBBounds[1] := 1
+			imageBBounds[2] := imageBCoords[2]
+			imageBBounds[3] := imageBCoords[3]
+			imageBBounds[4] := imageBCoords[2] + size[1]
+			imageBBounds[5] := imageBCoords[3] + size[2]
+		
+			return imageBBounds
+		}
+		Else
+		{
+			If (failOnNotFound)
+			{
+				stopLoop := 1
+				stopReason := "FindImageInImage could not find imageB " . imageB . " within imageA " . imageA
+			}
+		}
+	}
+	Else
+	{
+		If (failOnNotFound)
+		{
+			stopLoop := 1
+			stopReason := "FindImageInImage could not find imageA " . imageA
+		}
+	}
+	
+	return notFound
+}
+
+MenuAHasMoreThan100KgOfItemX(menuName="", targetName="", transMode="*TransWhite")
+{
+	foundItem := FindInMenu(menuName, targetName, transMode)
+	
+	If (foundItem[1])
+	{
+		itemX := foundItem[2]
+		itemY := foundItem[3]
+		
+		lineY := itemY - 5
+		
+		is100kg := 0
+		variant := 1
+		
+		Loop
+		{
+			If (is100kg = 1 OR variant > 3)
+			{
+				Break
+			}
+			
+			imgName := "100kg" . variant
+			
+			found100kg := FindInLine(imgName, lineY, itemX, "*TransBlack")
+			
+			If (found100kg)
+			{
+				is100kg := 1
+			}
+
+			variant += 1
+		}
+		
+		If (is100kg)
+		{
+			return 1
+		}
+	}
+	return 0
+}
+
+MenuAHasLessThan10KgOfItemX(menuName="", targetName="", transMode="*TransWhite")
+{
+	foundItem := FindInMenu(menuName, targetName, transMode)
+	
+	If (foundItem[1])
+	{
+		itemX := foundItem[2]
+		itemY := foundItem[3]
+		
+		lineY := itemY - 5
+		
+		isSub10kg := 0
+		variant := 1
+		
+		Loop
+		{
+			If (isSub10kg = 1 OR variant > 3)
+			{
+				Break
+			}
+			
+			imgName := "sub10kg" . variant
+			
+			foundSub10kg := FindInLine(imgName, lineY, itemX, "*TransWhite")
+			
+			If (foundSub10kg)
+			{
+				isSub10kg := 1
+			}
+
+			variant += 1
+		}
+		
+		If (isSub10kg)
+		{
+			return 1
+		}
+	}
+	return 0
 }
 
 GetImpItem(impItemCsv)
@@ -251,13 +530,13 @@ GetImpItem(impItemCsv)
 	return ret
 }
 
-MouseIsOnImage(imageName="")
+MouseIsOnImage(imageName="", transMode="*TransWhite")
 {
 	ret := 0
 	MouseGetPos, mouseX, mouseY
 	imageSize := GetImageSize(imageName)
 
-	imageCoords := GetImageCoords(imageName, mouseX - imageSize[1], mouseY - imageSize[2])
+	imageCoords := GetImageCoords(imageName, mouseX - imageSize[1], mouseY - imageSize[2], , , transMode)
 	If (imageCoords[1])
 	{
 		If ((mouseX > imageCoords[2] AND mouseX < imageCoords[2] + imageSize[1]) AND (mouseY > imageCoords[3] AND mouseY < imageCoords[3] + imageSize[2]))

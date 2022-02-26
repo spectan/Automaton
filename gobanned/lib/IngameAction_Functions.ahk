@@ -1,4 +1,4 @@
-ActivateToolbelt(page=0, slot=1)
+ActivateToolbelt(page, slot)
 {
 	DoKey(page, , , , "^")
 	SleepRandom(100,200)
@@ -156,6 +156,10 @@ RepairActiveToolIfDamaged()
 				AdvanceToCaveWall()
 			}
 		}
+		Else If (task = "Bricker")
+		{
+			MoveMouseToCraftingButton()
+		}
 		Else
 		{
 			Random, randX, -8, 8
@@ -254,6 +258,10 @@ DrinkWater()
 					AdvanceToCaveWall()
 				}
 			}
+			Else If (task = "Bricker")
+			{
+				MoveMouseToCraftingButton()
+			}
 			Else
 			{
 				Random, randX, -8, 8
@@ -331,6 +339,211 @@ EatSourceSalt()
 	}
 }
 
+PutColdLumpsInForge()
+{
+	global stopLoop, stopReason
+	
+	done := 0
+	lineTopY := 0
+	lumpOffset := 0
+	lineHeight := 18
+
+	ironLumpImageSize := GetImageSize("ironlumptransblack")
+	inventorySpaceSize := GetImageSize("inventoryspace")
+	
+	foundFirstLump := FindInMenu("inventoryheader", "ironlumptransblack", "*TransBlack")
+	
+	If (foundFirstLump[1])
+	{
+		MouseToRandomAreaAroundPoint(foundFirstLump[2] - 100, foundFirstLump[3] - 100)
+	
+		groupBoxFound := FindCoordsInLine("groupboxtransblack", foundFirstLump[3], foundFirstLump[2]-20, "*TransBlack")
+		
+		If (groupBoxFound[1])
+		{
+			ironLumpBelow := GetImageCoords("ironlumpicontransblack", foundFirstLump[2], foundFirstLump[3] + ironLumpImageSize[2], , , "*TransBlack")
+			
+			If (!ironLumpBelow[1])
+			{
+				; Group is collapsed, expand first
+				
+				MoveMouseToImageRandom("groupboxtransblack", groupBoxFound[2], groupBoxFound[3], "*TransBlack")
+				DoLeftClick()
+				
+				MouseGetPos, mouseX, mouseY
+				MouseToRandomAreaAroundPoint(mouseX - 100, mouseY - 100)
+			}
+			
+			; Move search coords down to first non-group lump
+			lineTopY := foundFirstLump[3] - 1 + lineHeight
+		}
+		Else
+		{
+			lineTopY := foundFirstLump[3] - 1
+		}
+		
+		While(!done)
+		{
+			currentLumpFound := GetImageCoords("ironlumptransblack", foundFirstLump[2], lineTopY + lumpOffset * lineHeight, , , "*TransBlack")
+			
+			If (currentLumpFound[1])
+			{
+				If (IsItemGlowingHot("ironlumptransblack", currentLumpFound[2], currentLumpFound[3], "*TransBlack"))
+				{
+					lumpOffset += 1
+				}
+				Else
+				{
+					; Put in forge
+					forgeSpace := FindInMenu("forgeheader", "inventoryspace")
+					
+					If (forgeSpace[1])
+					{
+						forgeSpaceX1 := forgeSpace[2]
+						forgeSpaceY1 := forgeSpace[3] + 18 ;18 down to avoid dragging into a container
+						forgeSpaceX2 := forgeSpace[2] + inventorySpaceSize[1]
+						forgeSpaceY2 := forgeSpace[3] + inventorySpaceSize[2]
+						
+						MoveMouseToBoundsRandom(currentLumpFound[2], currentLumpFound[3], currentLumpFound[2] + ironLumpImageSize[1], currentLumpFound[3] + ironLumpImageSize[2])
+						ClickDragToBounds(forgeSpaceX1, forgeSpaceY1, forgeSpaceX2, forgeSpaceY2)
+						SleepRandom(300, 500)
+					}
+					Else
+					{
+						stopLoop := 1
+						stopReason := "Not enough empty space in forge to put cold lumps"
+						done := 1
+						return 0
+					}
+				}
+			}
+			Else
+			{
+				; no more lumps found
+				done := 1
+			}
+		}
+	}
+	
+	return 1
+}
+
+ReplaceIronLumpFromForge()
+{
+	global stopLoop, stopReason, smithingToolbeltMap
+	DragMenuAItemXToMenuBItemY("forgeheader", "ironlumpglowinghottransblack", "inventoryheader", "inventoryspace", "*TransBlack", 1)
+	PutColdLumpsInForge()
+	
+	hasGlowingIronLump := FindInMenu("inventoryheader", "ironlumpglowinghottransblack", "*TransBlack")
+	
+	If (hasGlowingIronLump[1])
+	{
+		AssignInventoryItemToToolbeltPageAndSlot("ironlumpglowinghottransblack", smithingToolbeltMap["ironlump"][1], smithingToolbeltMap["ironlump"][2], "*TransBlack")
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Failed to replace glowing hot iron lump in inventory"
+	}
+}
+
+FuelForgeWithLogFromBSB()
+{
+	global stopLoop, stopReason
+
+	WithdrawFromBSB("logstransblack", "*TransBlack", 1)
+	
+	SleepRandom(300, 500)
+	foundLogs := FindInMenu("inventoryheader", "logstransblack", "*TransBlack")
+	If (foundLogs[1])
+	{
+		MoveMouseToImageRandom("logstransblack", foundLogs[2], foundLogs[3], "*TransBlack")
+		SleepRandom(300, 500)
+		DoDoubleClick()
+		
+		If (!FindInLine("activepixel"))
+		{
+			stopLoop := 1
+			stopReason := "Failed to activate log for refueling"
+			return
+		}
+		
+		forgeCoords := GetMenuCoords2("forgeheader")
+		
+		If (forgeCoords[1])
+		{
+			forgeCenterX := (forgeCoords[2] + forgeCoords[4])/2
+			forgeBottomY := forgeCoords[5]
+			
+			MouseToRandomAreaAroundPoint(forgeCenterX, forgeBottomY + 50, 50, 20)
+			SleepRandom(300, 500)
+			DoRightClick()
+			WaitForRefreshing()
+			SleepRandom(300, 500)
+			MoveMouseToImageRandom("burn")
+			DoLeftClick()
+		}
+		Else
+		{
+			stopLoop := 1
+			stopReason := "FuelForgeWithLogFromBSB failed to find forge coords"
+		}
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "FuelForgeWithLogFromBSB failed to withdraw logs"
+	}
+}
+
+AssignInventoryItemToToolbeltPageAndSlot(itemName, page, slot, transMode="*TransWhite")
+{
+	global stopLoop, stopReason
+
+	foundItem := FindInMenu("inventoryheader", itemName, transMode)
+	
+	If (foundItem[1])
+	{
+		DoKey(page, , , , "^")
+		SleepRandom(100,200)
+		
+		slotWidth := 35
+		slotOffset := (slotWidth + 2) * (slot-1)
+		
+		toolbeltCoords := GetImageCoords("toolbeltstart")
+		
+		If (toolbeltCoords[1])
+		{
+			toolbeltStartSize := GetImageSize("toolbeltstart")
+		
+			toolbeltSlotX1 := toolbeltCoords[2] + toolbeltStartSize[1] + slotOffset
+			toolbeltSlotY1 := toolbeltCoords[3]
+			toolbeltSlotX2 := toolbeltSlotX1 + slotWidth
+			toolbeltSlotY2 := toolbeltSlotY1 + toolbeltStartSize[2]
+			
+			MoveMouseToImageRandom(itemName, foundItem[2], foundItem[3], transMode)
+			ClickDragToBounds(toolbeltSlotX1 + 2, toolbeltSlotY1 + 2, toolbeltSlotX2 - 2, toolbeltSlotY2 - 2)
+			
+			MoveMouseToImageRandom("toolbeltstart")
+			DoRightClick()
+			WaitForRefreshing()
+			MoveMouseToImageRandom("savetoolbelt")
+			DoLeftClick()
+		}
+		Else
+		{
+			stopLoop := 1
+			stopReason := "AssignInventoryItemToToolbeltPageAndSlot failed: toolbelt not found"
+		}
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "AssignInventoryItemToToolbeltPageAndSlot failed: " . itemName . " not found"
+	}
+	SleepRandom(100,200)
+}
+
 AdvanceTile()
 {
 	global advancedTile
@@ -377,6 +590,108 @@ AdvanceToCaveFloorNotFlat()
 	}
 }
 
+AdvanceToWoodcuttable(walkTime=10)
+{
+	global stopLoop, stopReason
+	SleepRandom(300, 2000)
+	DoAttentionLapse()
+	Send {w down}
+	PlaySound("Key")
+	walkTimeReached := WaitUntilWoodcuttableHovered(walkTime)
+	Send {w up}
+	SleepRandom(100, 300)
+	
+	If (!IsHoveringWoodcuttable() AND walkTimeReached)
+	{
+		stopLoop := 1
+		stopReason := "Failed to advance to woodcuttable"
+		return 0
+	}
+	
+	return 1
+}
+
+TryTakeDirtForLevel()
+{
+	; TODO: make it work for sand as well
+
+	hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
+	hasMoreThan100kgDirt := MenuAHasMoreThan100KgOfItemX("inventoryheader", "dirttransblack", "*TransBlack")
+	takeDirt := 0
+	
+	If (hasMoreThan100kgDirt)
+	{
+		; 1/3 chance to take dirt above 100kg (antimacro)
+		Random, rand, 0, 2
+		If (rand = 0)
+		{
+			takeDirt := 1
+		}
+	}
+	If (!hasDirt[1] OR !hasMoreThan100kgDirt)
+	{
+		takeDirt := 1
+	}
+	
+	If (takeDirt)
+	{
+		WithdrawFromAnywhere("pilesofdirttransblack", "*TransBlack")
+	}
+}
+
+TryDropDirtForLevel(forceDrop=0)
+{
+	global stopLoop, stopReason
+	
+	; TODO: make it work for sand as well
+
+	pileOpen := ScreenSearch("pileheader")
+	hasDirt := FindInMenu("inventoryheader", "dirttransblack", "*TransBlack")
+	hasMoreThan100kgDirt := MenuAHasMoreThan100KgOfItemX("inventoryheader", "dirttransblack", "*TransBlack")
+	dropDirt := 0
+	
+	If (hasDirt[1])
+	{
+		; 1/3 chance to drop dirt before 100kg (antimacro)
+		Random, rand, 0, 2
+		If (rand = 0)
+		{
+			dropDirt := 1
+		}
+	}
+	If (hasDirt[1] AND (hasMoreThan100kgDirt OR forceDrop))
+	{
+		dropDirt := 1
+	}
+	
+	If (dropDirt)
+	{
+		If (pileOpen)
+		{
+			DragMenuAItemXToMenuBItemY("inventoryheader", "dirttransblack", "pileheader", "inventoryspace", "*TransBlack")
+			SleepRandom(300, 500)
+		}
+
+		If (!pileOpen OR DoesntFit())
+		{
+			If (!MouseIsOnImage("dirttransblack", "*TransBlack"))
+			{
+				MoveMouseToImageRandom("dirttransblack", hasDirt[2], hasDirt[3], "*TransBlack")
+			}
+			DoKey("q")
+		}
+	}
+	
+	If (TooLitteredWithItems())
+	{
+		stopLoop := 1
+		stopReason := "Unable to drop dirt when levelling down"
+		return 0
+	}
+	
+	return 1
+}
+
 ClearEventTab()
 {
 	global stopLoop, stopReason
@@ -399,6 +714,132 @@ ClearEventTab()
 	{
 		stopLoop := 1
 		stopReason := "Could not find event tab"
+	}
+}
+
+WithdrawFromBSB(imageName, transMode="*TransWhite", quantity=0)
+{
+	global stopLoop, stopReason
+
+	DragMenuAItemXToMenuBItemY("bsbheader", imageName, "inventoryheader", "inventoryspace", transMode)
+	WaitUntilRemovingItems()
+	
+	foundSend := FindInMenu("removingitemsheader", "bsbsendbutton")
+	
+	If (foundSend[1])
+	{
+		If (quantity)
+		{
+			TypeInput(quantity)
+		}
+	
+		ClickOnImage("bsbsendbutton", "left", foundSend[2], foundSend[3])
+		
+		WaitUntilInventoryHasItem(imageName, transMode)
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Send not found when removing items from bsb"
+	}
+}
+
+WithdrawFromBulkContainer(bulkContainerName, imageName, transMode="*TransWhite", quantity=0)
+{
+	global stopLoop, stopReason
+
+	DragMenuAItemXToMenuBItemY(bulkContainerName, imageName, "inventoryheader", "inventoryspace", transMode)
+	WaitUntilRemovingItems()
+	
+	foundSend := FindInMenu("removingitemsheader", "bsbsendbutton")
+	
+	If (foundSend[1])
+	{
+		If (quantity)
+		{
+			TypeInput(quantity)
+		}
+	
+		ClickOnImage("bsbsendbutton", "left", foundSend[2], foundSend[3])
+		
+		WaitUntilInventoryHasItem(imageName, transMode)
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Send not found when removing items from " . bulkContainerName
+	}
+}
+
+WithdrawFromAnywhere(imageName, transMode="*TransWhite")
+{
+	global stopLoop, stopReason
+	
+	pileItemFound := FindInMenu("pileheader", imageName, transMode)
+	; Only pulls from crates in the cart
+	largeCartItemFound := FindInMenu("largecartheader", imageName, transMode)
+	smallCrateItemFound := FindInMenu("smallcrateheader", imageName, transMode)
+	; TODO: large crate
+	;largeCrateItemFound := FindInMenu("largecrateheader", imageName, transMode)
+	bsbItemFound := FindInMenu("bsbheader", imageName, transMode)
+	
+	If (pileItemFound[1])
+	{
+		DragMenuAItemXToMenuBItemY("pileheader", imageName, "inventoryheader", "inventoryspace", transMode)
+	}
+	Else if (largeCartItemFound[1])
+	{
+		WithdrawFromBulkContainer("largecartheader", imageName, transMode)
+	}
+	Else if (smallCrateItemFound[1])
+	{
+		WithdrawFromBulkContainer("smallcrateheader", imageName, transMode)
+	}
+	; TODO: large crate
+	Else if (bsbItemFound[1])
+	{
+		WithdrawFromBulkContainer("bsbheader", imageName, transMode)
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "WithdrawFromAnywhere did not find any " . imageName
+	}
+}
+
+MoveItemFromInventoryToCraftingWindow(item, transMode="*TransWhite", combineItems=0, side="right")
+{
+	stoneFound := FindInMenu("inventoryheader", item, transMode)
+	
+	If (stoneFound[1])
+	{
+		MoveMouseToImageRandom(item, stoneFound[2], stoneFound[3], transMode)
+		
+		sideName := "craftingwindow" . side
+		craftingBox := FindImageInImage("craftingwindowbox", sideName)
+		
+		If (craftingBox[1])
+		{
+			ClickDragToBounds(craftingBox[2], craftingBox[3], craftingBox[4], craftingBox[5])
+			
+			If (combineItems)
+			{
+				MouseGetPos, mouseX, mouseY
+				Random, xRand, -100, -30
+				Random, yRand, 30, 100
+				MoveMouseHumanlike(mouseX + xRand, mouseY + yRand)
+			
+				combine := FindImageInImage("craftingwindowcombine", sideName)
+				
+				If (combine[1])
+				{
+					MoveMouseToBoundsRandom(combine[2], combine[3], combine[4], combine[5])
+					SleepRandom(200, 400)
+					DoSingleClick()
+				}
+			}
+			SleepRandom(100, 300)
+		}
 	}
 }
 

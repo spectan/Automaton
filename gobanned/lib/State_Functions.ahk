@@ -1,3 +1,132 @@
+IsWhiteNameInLocal()
+{
+	ret := 0
+	WinGetActiveTitle, title
+	
+	; Since this is only looking for a white pixel, it could false positive
+	; when switching windows unless you only check it in the Wurm Online window
+	If (InStr(title, "Wurm Online"))
+	{
+		localCoords := GetImageCoords("localtab20top", , , , , "*TransBlack")
+		
+		If (localCoords[1])
+		{
+			localX1 := localCoords[2]
+			localY1 := localCoords[3] + 20
+			
+			size := GetImageSize("localtab20top")
+			
+			localX2 := localCoords[2] + size[1]
+			localY2 := localCoords[3] + size[2]
+			
+			If (ScreenSearch("whitepixel", 30, "*TransBlack", localX1, localY1, localX2, localY2))
+			{
+				screenshotFile := A_WorkingDir . "\screenshots\localtrigger.png"
+				Run, nircmd.exe savescreenshot %screenshotFile%
+				
+				MoveMouseToImageRandom("total", localX1, localY1, "*TransBlack", 0, 0, 200)
+				DoRightClick(50, 100)
+				MoveMouseToImageRandom("copytab", , , , 0, 0, 100)
+				DoLeftClick(50, 100)
+				ret := 1
+			}
+		}
+	}
+	return ret
+}
+
+IsForgeBurningSteadily()
+{
+	global stopLoop, stopReason, lastCheckedForge
+	
+	Say("Checking forge")
+	ret := 0
+
+	forgeCoords := GetMenuCoords2("forgeheader")
+	
+	If (forgeCoords[1])
+	{
+		forgeCenterX := (forgeCoords[2] + forgeCoords[4])/2
+		forgeBottomY := forgeCoords[5]
+		
+		MouseToRandomAreaAroundPoint(forgeCenterX, forgeBottomY + 50, 50, 20)
+		SleepRandom(300, 500)
+		lastCheckedForge := A_TickCount
+		DoKey("y")
+		SleepRandom(1000, 2000)
+		
+		If (ScreenSearch("aforge", , "*TransBlack"))
+		{
+			ret := ScreenSearch("forgeburnssteadily")
+		}
+		Else
+		{
+			stopLoop := 1
+			stopReason := "IsForgeBurningSteadily could not find forge examine"
+			ret := 1
+		}
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "IsForgeBurningSteadily could not find forge coords"
+	}
+	
+	return ret
+}
+
+ForgeHasIronLumps()
+{
+	ret := 0
+	
+	If (ScreenSearch("forgeheader"))
+	{
+		forgeLumpsFound := FindInMenu("forgeheader", "ironlumptransblack", "*TransBlack")
+		
+		ret := forgeLumpsFound[1]
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Forge was not open when looking for iron lumps"
+	}
+	return ret
+}
+
+ForgeHasGlowingIronLumps()
+{
+	ret := 0
+	
+	If (ScreenSearch("forgeheader"))
+	{
+		forgeLumpsFound := FindInMenu("forgeheader", "ironlumptransblack", "*TransBlack")
+		forgeGlowingLumpsFound := FindInMenu("forgeheader", "ironlumpglowinghottransblack", "*TransBlack")
+		
+		ret := forgeLumpsFound[1] AND forgeGlowingLumpsFound[1]
+	}
+	Else
+	{
+		stopLoop := 1
+		stopReason := "Forge was not open when looking for glowing iron lumps"
+	}
+	return ret
+}
+
+IsItemGlowingHot(itemName, leftX=0, topY=0, transMode="*TransWhite")
+{
+	itemImageSize := GetImageSize(itemName)
+	itemGlowing := GetImageCoords("glowinghot", leftX, topY, leftX + itemImageSize[1], topY + itemImageSize[2])
+	
+	If (itemGlowing[1])
+	{
+		return 1
+	}
+	Else
+	{
+		return 0
+	}
+}
+
 IsIdle()
 {
 	return (!IsQueued() AND IsNotDoingAction())
@@ -38,6 +167,36 @@ NoSpaceToMine()
 	return ret
 }
 
+YouHitRock()
+{
+	ret := ScreenSearch("youhitrock")
+	return ret
+}
+
+AlreadyFlat()
+{
+	ret := ScreenSearch("alreadyflat")
+	return ret
+}
+
+BorderIsFlatHere()
+{
+	ret := ScreenSearch("borderisflathere")
+	return ret
+}
+
+GroundIsFlatHere()
+{
+	ret := ScreenSearch("groundisflathere")
+	return ret
+}
+
+YouCannotDigRock()
+{
+	ret := ScreenSearch("youcannotdigrock")
+	return ret
+}
+
 IsFullStamina()
 {
 	global isFullStamina
@@ -49,6 +208,11 @@ IsFullStamina()
 IsCraftingOpen()
 {
 	return ScreenSearch("craftingWindow")
+}
+
+MaterialIsTooPoorShape()
+{
+	return ScreenSearch("toopoorshape")
 }
 
 TooHungry()
@@ -89,6 +253,16 @@ TooFar()
 	return ScreenSearch("toofar")
 }
 
+TooFarSpam()
+{
+	return ScreenSearch("toofarspam")
+}
+
+IsActionBlocked()
+{
+	return ScreenSearch("clearthearea")
+}
+
 Thirsty()
 {
 	return !ScreenSearch("enoughwater")
@@ -107,6 +281,11 @@ CannotKeepMining()
 CaveWallHovered()
 {
 	return ScreenSearch("cavewall", 20)
+}
+
+IsAltarHovered()
+{
+	return ScreenSearch("altarhovered", 20)
 }
 
 NeedConcrete()
@@ -141,6 +320,48 @@ IsHoveringTileBorder()
 IsHoveringCaveFloor()
 {
 	ret := ScreenSearch("cavefloor", 20)
+	return ret
+}
+
+NotStrongEnoughForMoreDirt()
+{
+	ret := ScreenSearch("notstrongenoughformoredirt")
+	return ret
+}
+
+TooLitteredWithItems()
+{
+	ret := ScreenSearch("toolitteredwithitems")
+	return ret
+}
+
+TooSteep()
+{
+	ret := ScreenSearch("toosteep")
+	return ret
+}
+
+NeedDirtToLevel()
+{
+	ret := ScreenSearch("ifyoucarriedsome")
+	return ret
+}
+
+FlatHovered()
+{
+	ret := ScreenSearch("flathover", 20)
+	return ret
+}
+
+DoesntFit()
+{
+	ret := ScreenSearch("doesntfit")
+	return ret
+}
+
+IsStrayDirtHovered()
+{
+	ret := ScreenSearch("dirthover", 20) AND !ScreenSearch("pileofdirthover", 20)
 	return ret
 }
 
@@ -180,6 +401,12 @@ IsHoveringFelledTree()
 	return ret
 }
 
+IsHoveringBush()
+{
+	ret := ScreenSearch("bush", 20)
+	return ret
+}
+
 IsHoveringTree()
 {
 	ret := ScreenSearch("tree", 20)
@@ -192,6 +419,18 @@ IsHoveringTreeStump()
 	return ret
 }
 
+IsHoveringCuttableTree()
+{
+	ret :=  !IsHoveringTreeStump() AND (IsHoveringTree() OR IsHoveringBush()) 
+	return ret
+}
+
+IsHoveringWoodcuttable()
+{
+	ret := IsHoveringFelledTree() OR IsHoveringCuttableTree()
+	return ret
+}
+
 PracticeDollHovered()
 {
 	return ScreenSearch("practicedolltooltip")
@@ -200,6 +439,11 @@ PracticeDollHovered()
 LumpCooled()
 {
 	return ScreenSearch("lumpcooled")
+}
+
+NeedWater()
+{
+	return ScreenSearch("needwater")
 }
 
 HasFasted()
@@ -231,13 +475,13 @@ IsRepaired()
 
 IsFourHourShutoff()
 {
-	global startTime, stopLoop, fourHourLimited, logout
+	global startTime, stopLoop, stopReason, fourHourLimited, logout, enableFourHourLimit
 	elapsed := A_TickCount - startTime
-	If (elapsed >= 4 * 60 * 60 * 1000)
+	If (enableFourHourLimit AND elapsed >= 4 * 60 * 60 * 1000)
 	{
 		stopLoop := 1
+		stopReason := "Four hour limit reached"
 		fourHourLimited := 1
-		logout := 1
 		ret := 1
 	}
 	Else

@@ -55,24 +55,64 @@ DoClick(nTimes=1, duration=0, maxDelay=300)
 	}
 }
 
-DoLeftClick()
+DoLeftClick(minSleep=100, maxSleep=300)
 {
 	Random, duration, 25, 100
 	Click, down
 	PlaySound("Click1")
 	Sleep, %duration%
 	Click, up
-	SleepRandom(100, 300)
+	SleepRandom(minSleep, maxSleep)
 }
 
-DoRightClick()
+DoDoubleClick(minSleep=100, maxSleep=300)
+{
+	Click, down
+	PlaySound("Click1")
+	SleepRandom(25, 100)
+	Click, up
+	SleepRandom(50, 150)
+	Click, down
+	PlaySound("Click1")
+	SleepRandom(25, 100)
+	Click, up
+	SleepRandom(minSleep, maxSleep)
+}
+
+DoRightClick(minSleep=100, maxSleep=300)
 {
 	Random, duration, 25, 100
 	Click, down, right
 	PlaySound("Click1")
 	Sleep, %duration%
 	Click, up, right
-	SleepRandom(100, 300)
+	SleepRandom(minSleep, maxSleep)
+}
+
+MoveMouseToCraftingButton()
+{
+	; If create/continue is covered by a hover tooltip due to moving mouse to [Send]
+	If (!ScreenSearch("createbutton") AND !ScreenSearch("continuebutton"))
+	{
+		MoveMouseToImageRandom("craftingWindow")
+	}
+
+	; Only one of these if checks will succeed
+	If (ScreenSearch("createbutton") AND !MouseIsOnImage("createbutton"))
+	{
+		MoveMouseToImageRandom("createbutton")
+	}
+	If (ScreenSearch("continuebutton") AND !MouseIsOnImage("continuebutton"))
+	{
+		MoveMouseToImageRandom("continuebutton")
+	}
+}
+
+MouseToRandomAreaAroundPoint(midX, midY, xRadius=20, yRadius=20)
+{
+	Random, randX, -1*xRadius, xRadius
+	Random, randY, -1*yRadius, yRadius
+	MoveMouseHumanlike(midX + randX, midY + randY)
 }
 
 MouseToRandomMiddle(radius=20)
@@ -81,6 +121,16 @@ MouseToRandomMiddle(radius=20)
 	Random, randY, -1*radius, radius
 	midX := 1920/2
 	midY := 1080/2
+	MoveMouseHumanlike(midX + randX, midY + randY)
+}
+
+MouseToRandomBottomMiddle(radius=20)
+{
+	; Mouse to random middle 3/4 down
+	Random, randX, -1*radius, radius
+	Random, randY, -1*radius, radius
+	midX := 1920/2
+	midY := 1080/4*3
 	MoveMouseHumanlike(midX + randX, midY + randY)
 }
 
@@ -103,6 +153,7 @@ MoveMouseHumanlike(x, y, mouseTime=0)
 			Random, mouseTime, 300, 600
 		}
 	}
+	
 	RandomBezier(0, 0, x, y, "T" . mouseTime . " RO P3")
 	SleepRandom(200, 500)
 }
@@ -149,9 +200,22 @@ RandomBezier( X0, Y0, Xf, Yf, O="" ) {
     Return N+1
 }
 
+StoreMouse()
+{
+	global storedMouseX, storedMouseY
+	
+	MouseGetPos, mX, mY
+	
+	storedMouseX := mX
+	storedMouseY := mY
+}
+
 ReturnMouse(mouseX=0, mouseY=0)
 {
-	global task
+	global task, storedMouseX, storedMouseY
+	
+	; TODO: it may be better to use stored mouse coords to prevent missed clicks
+	
 	If (mouseX = 0 OR mouseY = 0)
 	{
 		MouseToRandomMiddle()
@@ -176,6 +240,9 @@ ReturnMouse(mouseX=0, mouseY=0)
 		Random, randY, -8, 8
 		MoveMouseHumanlike(mouseX + randX, mouseY + randY)
 	}
+	
+	storedMouseX := 0
+	storedMouseY := 0
 }
 
 MouseToArcheryIcon()
@@ -192,23 +259,40 @@ MouseToArcheryIcon()
 	}
 }
 
-MoveMouseToImageRandom(imageName="", preFoundX=0, preFoundY=0, transMode="*TransWhite", minSleep=300, maxSleep=600)
+MoveMouseToImageRandom(imageName="", preFoundX=0, preFoundY=0, transMode="*TransWhite", minSleep=300, maxSleep=600, mouseTime=0)
 {
 	global stopLoop, stopReason
 
-	imageFound := GetImageCoords(imageName, Max(0, preFoundX-1), Max(0,preFoundY-1), , , transMode)
+	imageFound := []
+	imageFound[1] := 1
+	imageFound[2] := preFoundX
+	imageFound[3] := preFoundY
+	
+	If (preFoundX = 0 OR preFoundY = 0)
+	{
+		imageFound := GetImageCoords(imageName, Max(0, preFoundX-1), Max(0,preFoundY-1), , , transMode)
+	}
+	
 	If (imageFound[1])
 	{
 		imageX := imageFound[2]
 		imageY := imageFound[3]
 		
+		additionalDown := 0
+		
+		; To avoid dragging into inventory group if random y is top edge
+		If (imageName = "inventoryspace")
+		{
+			additionalDown := 18
+		}
+		
 		imageSize := GetImageSize(imageName)
 		imageWidth := imageSize[1]
 		Random, imageXRand, 0, imageWidth - 4
 		imageHeight := imageSize[2]
-		Random, imageYRand, 0, imageHeight - 4
+		Random, imageYRand, 0, imageHeight - 4 - additionalDown
 		
-		MoveMouseHumanlike(imageX + 2 + imageXRand, imageY + 2 + imageYRand)
+		MoveMouseHumanlike(imageX + 2 + imageXRand, imageY + 2 + imageYRand + additionalDown, mouseTime)
 		SleepRandom(minSleep, maxSleep)
 		
 		return 1
@@ -220,57 +304,75 @@ MoveMouseToImageRandom(imageName="", preFoundX=0, preFoundY=0, transMode="*Trans
 		
 		return 0
 	}
-	
 }
 
-ClickOnImage(imagename="", leftOrRight="left", prefoundX=0, prefoundY=0, transMode="*TransWhite")
+MoveMouseToBoundsRandom(x1, y1, x2, y2, minSleep=300, maxSleep=600, mouseTime=0)
 {
-	SleepRandom(300,500)
-		
-	If (MoveMouseToImageRandom(imageName, prefoundX, prefoundY, transMode))
+	leftX := x1
+	topY := y1
+	
+	width := x2 - x1
+	Random, xRand, 0, width - 4
+	height := y2 - y1
+	Random, yRand, 0, height - 4
+	
+	MoveMouseHumanlike(leftX + 2 + xRand, topY + 2 + yRand, mouseTime)
+	SleepRandom(minSleep, maxSleep)
+	
+	return 1
+}
+
+ClickDragToBounds(x1, y1, x2, y2)
+{
+	Click, Down
+	SleepRandom(200, 400)
+	MoveMouseToBoundsRandom(x1, y1, x2, y2)
+	SleepRandom(200, 400)
+	Click, Up
+	SleepRandom(200, 400)
+}
+
+ClickOnImage(imagename="", leftOrRight="left", preFoundX=0, preFoundY=0, transMode="*TransWhite")
+{
+	If (MoveMouseToImageRandom(imageName, preFoundX, preFoundY, transMode))
 	{
 		If (leftOrRight = "right")
 		{
 			DoRightClick()
-			SleepRandom(400,600)
 			WaitForRefreshing()
 			If (stopLoop)
 			{
-				return
+				return 0
 			}
 			return 1
 		}
 		Else
 		{
 			DoLeftClick()
-			SleepRandom(400,600)
-			WaitForRefreshing()
-			If (stopLoop)
-			{
-				return
-			}
 			return 1
 		}
 	}
 	return 0
 }
 
-DragMenuAItemXToMenuBItemY(menuA="", itemX="", menuB="", itemY="inventoryspace")
+DragMenuAItemXToMenuBItemY(menuA="", itemX="", menuB="", itemY="inventoryspace", itemXTransMode="*TransBlack", failOnNotFound=1)
 {
 	global stopLoop, stopReason
 	
 	; Store mouse
 	; mouse pos
 	
-	itemXFound := FindInMenu(menuA, itemX, "*TransBlack")
+	itemXFound := FindInMenu(menuA, itemX, itemXTransMode)
 	
 	If (itemXFound[1])
 	{
-		MoveMouseToImageRandom(itemX, itemXFound[2], itemXFound[3], "*TransBlack")
+		MoveMouseToImageRandom(itemX, itemXFound[2], itemXFound[3], itemXTransMode)
 		
 		itemYFound := FindInMenu(menuB, itemY)
+
 		If (itemYFound[1])
 		{
+			
 			; Click hold
 			Click, Down
 			SleepRandom(300, 600)
@@ -288,13 +390,19 @@ DragMenuAItemXToMenuBItemY(menuA="", itemX="", menuB="", itemY="inventoryspace")
 		}
 		Else
 		{
-			stopLoop := 1
-			stopReason := "Failed DragMenuAItemXToMenuBItemY: no " . itemY . " found"
+			If (failOnNotFound)
+			{
+				stopLoop := 1
+				stopReason := "Failed DragMenuAItemXToMenuBItemY: no " . itemY . " found"
+			}
 		}
 	}
 	Else
 	{
-		stopLoop := 1
-		stopReason := "Failed DragMenuAItemXToMenuBItemY: no " . itemX . " found"
+		If (failOnNotFound)
+		{
+			stopLoop := 1
+			stopReason := "Failed DragMenuAItemXToMenuBItemY: no " . itemX . " found"
+		}
 	}
 }

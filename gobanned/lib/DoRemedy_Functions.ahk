@@ -16,7 +16,7 @@ DoConfiguredTaskRemedy(giveChance=0)
 	
 	If (InStr(task, "Imp") AND !impWorldObject)
 	{
-		If (ImproveRequiresItem())
+		If (ImproveRequiresItem() AND !InStr(task, "Smithing"))
 		{
 			stopLoop := 1
 			stopReason := "Improve requires item"
@@ -55,12 +55,109 @@ DoConfiguredTaskRemedy(giveChance=0)
 		secondChance := 0
 		RemedyLevelCaveFloor()
 	}
+	Else If (task = "Bricker")
+	{
+		previousTaskAttemptWorked := 1
+		secondChance := 0
+		RemedyBricker()
+	}
+	Else If (task = "KeyMoulds")
+	{
+		previousTaskAttemptWorked := 1
+		secondChance := 0
+		RemedyKeyMoulds()
+	}
+	Else If (task = "Mortar")
+	{
+		previousTaskAttemptWorked := 1
+		secondChance := 0
+		RemedyMortar()
+	}
 	Else
 	{
 		stopLoop := 1
-		stopReason := "Previous action failed, no remedy configured"
+		If (stopReason = "")
+		{
+			stopReason := "Previous action failed, no remedy configured"
+		}
 	}
 	
+}
+
+RemedyMortar()
+{
+	; deposit mortar
+	DragMenuAItemXToMenuBItemY("inventoryheader", "mortartransblack", "bsbheader", "inventoryspace", "*TransBlack", 0)
+
+	; pull clay from bsb if <10kg
+	foundClay := FindInMenu("inventoryheader", "clay")
+	If (!foundClay[1] OR MenuAHasLessThan10KgOfItemX("inventoryheader", "clay"))
+	{
+		WithdrawFromBSB("clay", , 30)
+		withdrewClay := 1
+	}
+	
+	; pull sand from bsb if <10kg
+	foundSand := FindInMenu("inventoryheader", "sandtransblack", "*TransBlack")
+	If (!foundSand[1] OR MenuAHasLessThan10KgOfItemX("inventoryheader", "sandtransblack", "*TransBlack"))
+	{
+		WithdrawFromBSB("sandtransblack", "*TransBlack", 3)
+		withdrewSand := 1
+	}
+	
+	; put in window and combine
+	If (withdrewClay)
+	{
+		MoveItemFromInventoryToCraftingWindow("clay", "*TransWhite", 1, "right")
+	}
+	If (withdrewSand)
+	{
+		MoveItemFromInventoryToCraftingWindow("sandtransblack", "*TransBlack", 1, "left")
+	}
+}
+
+RemedyKeyMoulds()
+{
+	; move moulds to altar
+	DragMenuAItemXToMenuBItemY("inventoryheader", "keymouldtransblack", "altarheader", "inventoryspace", "*TransBlack", 0)
+	
+	; pull clay from bsb
+	foundClay := FindInMenu("inventoryheader", "clay")
+	If (!foundClay[1] OR MenuAHasLessThan10KgOfItemX("inventoryheader", "clay"))
+	{
+		WithdrawFromBSB("clay")
+		
+		; move inventory clay to craftingwindowright box and combine
+		MoveItemFromInventoryToCraftingWindow("clay", "*TransWhite", 1, "right")
+	}
+	
+	; sacrifice key moulds (position altar below crafting window create button)
+	MoveMouseToCraftingButton()
+	
+	foundSaccableMoulds := FindInMenu("altarheader", "keymouldtransblack", "*TransBlack")
+	If (foundSaccableMoulds[1])
+	{
+		Say("Sacking moulds")
+		Random, xRand, -50, 50
+		Random, yRand, 175, 200
+		MouseGetPos, mouseX, mouseY
+		MoveMouseHumanlike(mouseX + xRand, mouseY + yRand)
+		DoKey("B")
+		SleepRandom(300, 2000)
+		WaitUntilIdle()
+	}
+}
+
+RemedyBricker()
+{
+	; move bricks to bsb
+	DragMenuAItemXToMenuBItemY("inventoryheader", "stonebricktransblack", "bsbheader", "inventoryspace", "*TransBlack", 0)
+	
+	; pull stone from bsb
+	WithdrawFromBSB("stoneshardtransblack", "*TransBlack")
+	
+	; move inventory stone to craftingwindowright box and combine
+	MoveItemFromInventoryToCraftingWindow("stoneshardtransblack", "*TransBlack", 1, "right")
 }
 
 RemedyArchery()
@@ -147,20 +244,65 @@ RemedyTunnelIntoWater()
 
 RemedyImp()
 {
-	global impXBalance, task
+	global impXBalance, task, lastCheckedForge
 	
-	If (task = "SmithingImp" AND LumpCooled())
-	{
-		stopLoop := 1
-		stopReason := "Lump cooled"
-		return
-	}
-	
+		
 	itemLineTopY := GetItemLineTop()
 	
 	MouseGetPos, mouseX, mouseY
 	Random, yRand, 0, 15 - 3
 	Random, xRand, -16, 16
+	
+	If (task = "SmithingImp")
+	{
+		lumpCooled := LumpCooled()		
+		improveRequiresItem := ImproveRequiresItem()
+		tooPoorShape := MaterialIsTooPoorShape()
+		
+		inventoryGlowingLumpFound := FindInMenu("inventoryheader", "ironlumpglowinghottransblack", "*TransBlack")
+		
+		; On a failed action, check for fuel if lump cooled or if it's been a random # minutes 15-30
+		Random, randFuelInterval, 15, 30
+		readyForFuelCheck := (A_TickCount - lastCheckedForge) > randFuelInterval * 60 * 1000
+	
+		If ((lumpCooled OR readyForFuelCheck) AND !IsForgeBurningSteadily())
+		{
+			FuelForgeWithLogFromBSB()
+			
+			SleepRandom(600, 2000)
+			
+			If (!ForgeHasIronLumps())
+			{
+				stopLoop := 1
+				stopReason := "Forge has no iron lumps"
+				return
+			}
+			Else If (!ForgeHasGlowingIronLumps())
+			{
+				WaitUntilForgeHasGlowingIronLumps()
+				
+				; Additional 1-2m wait to let lump heat up some more
+				SleepRandom(1 * 60 * 1000, 2 * 60 * 1000)
+			}
+		}
+		
+		If ((lumpCooled OR improveRequiresItem) AND !inventoryGlowingLumpFound[1])
+		{
+			ReplaceIronLumpFromForge()
+		}
+		Else If (improveRequiresItem AND inventoryGlowingLumpFound[1] OR NeedWater())
+		{
+			; Water ran out
+			stopLoop := 1
+			stopReason := "ImproveRequiresItem: water ran out"
+			return
+		}
+	
+		If (!tooPoorShape)
+		{
+			itemLineTopY -= 18
+		}
+	}
 	
 	If (impXBalance < -16)
 	{

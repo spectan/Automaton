@@ -1,0 +1,1 @@
+Screenshots such as white name in local triggers go here

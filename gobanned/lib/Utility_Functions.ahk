@@ -6,6 +6,36 @@ GetPlayerName()
 	return playerName
 }
 
+TypeInput(inputVar)
+{
+	inputStr := "" . inputVar
+	
+	Loop, Parse, inputStr
+	{
+		key := A_LoopField
+		DoKey(key)
+	}
+}
+
+MouseWithinRadiusOfPoint(radius, x, y)
+{
+	MouseGetPos, mX, mY
+	
+	xWithin := mX >= x-radius AND mX <= x+radius
+	yWithin := mY >= y-radius AND mY <= y+radius
+	
+	return xWithin AND yWithin
+}
+
+SevereAlarm(title="SEVERE ALARM", message="")
+{
+	global severeAlarmPlaying
+	severeAlarmPlaying := 1
+	SetTimer, SevereAlarmThread, 100
+	MsgBox, 4096, %title%, %message%
+	ExitApp
+}
+
 SleepRandom(minSleep, maxSleep)
 {
 	Random, rand, %minSleep%, %maxSleep%
@@ -30,6 +60,12 @@ Say(speech="")
 	{
 		ComObjCreate("SAPI.SpVoice").Speak(speech)
 	}
+}
+
+TakeScreenshot(fileName="screenshot")
+{
+	screenshotFile := A_WorkingDir . "\screenshots\" . fileName . ".png"
+	Run, nircmd.exe savescreenshot %screenshotFile%
 }
 
 DoAttentionLapse()
